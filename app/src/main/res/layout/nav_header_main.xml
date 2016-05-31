@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:background="@color/white"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/very_light_gray"
+        app:layout_heightPercent="50%"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_photo"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_centerInParent="true"
+        android:src="@android:drawable/sym_def_app_icon"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="3dp"
+        app:civ_fill_color="@color/very_light_gray"/>
+
+    <TextView
+        android:id="@+id/tv_name"
+        fontPath="fonts/handwrite.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_photo"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:text="Android Studio"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/green"
+        android:textSize="22sp"/>
+
+</android.support.percent.PercentRelativeLayout>

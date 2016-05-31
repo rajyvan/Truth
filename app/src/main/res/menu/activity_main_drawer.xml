@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_bible"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/menu_bible"/>
+        <item
+            android:id="@+id/nav_verse"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_my_verse"/>
+        <item
+            android:id="@+id/nav_comment"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_my_comments"/>
+        <item
+            android:id="@+id/nav_statistics"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_my_statistics"/>
+    </group>
+
+    <item android:title="@string/indentity">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/logout"/>
+        </menu>
+    </item>
+
+</menu>

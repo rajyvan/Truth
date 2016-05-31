@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- base colors -->
+    <color name="dark_blue">#0B495E</color>
+    <color name="dark_green">#11936C</color>
+    <color name="green">#7CD38F</color>
+    <color name="light_green">#BDD8B3</color>
+    <color name="white_green">#F2E2C4</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="orange">#F4A261</color>
+    <color name="very_light_gray">#F1F1F1</color>
+
+    <color name="colorPrimary">@color/green</color>
+    <color name="colorPrimaryDark">@color/dark_green</color>
+    <color name="colorAccent">@color/orange</color>
+
+</resources>
