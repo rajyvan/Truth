@@ -5,6 +5,10 @@ import android.content.Context;
 
 import com.facebook.FacebookSdk;
 
+import java.io.IOException;
+
+import mg.yvan.truth.provider.BibleDbOpenHelper;
+
 /**
  * Created by Yvan on 30/05/16.
  */
@@ -22,6 +26,12 @@ public class TruthApplication extends Application {
         appContext = this;
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+
+        try {
+            new BibleDbOpenHelper(this).createDataBase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

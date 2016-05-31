@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tv_num"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/dark_green"
+        android:textSize="18sp"
+        tools:text="121"/>
+
+    <TextView
+        android:id="@+id/tv_verse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_num"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nibh enim. Vestibulum volutpat elit sed mattis efficitur. Donec imperdiet quam dolor, et aliquam felis fringilla a. Donec imperdiet neque non nulla gravida tristique. Maecenas malesuada erat vel gravida efficitur. Pellentesque sit amet sollicitudin ipsum. Vestibulum bibendum purus et purus aliquet, in pulvinar enim vestibulum. Pellentesque eu lacus a quam imperdiet pretium in eget tortor. Proin quis massa vehicula, gravida purus et, hendrerit dolor. Quisque justo magna, consequat eget scelerisque et, semper fermentum magna. Donec rhoncus, mauris et rutrum vulputate, orci nunc viverra metus, sed rutrum arcu ipsum a ante"/>
+
+    <View android:id="@+id/line"
+          android:layout_width="match_parent"
+          android:layout_height="1px"
+          android:layout_below="@id/tv_verse"
+          android:layout_marginBottom="8dp"
+          android:layout_marginTop="8dp"
+          android:background="@color/light_gray"/>
+
+    <ImageButton
+        android:id="@+id/btn_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/line"
+        android:background="@null"
+        android:src="@drawable/like_off"/>
+
+</RelativeLayout>

@@ -20,7 +20,7 @@ import mg.yvan.truth.models.Verse;
  */
 public class BibleContentProvider extends ContentProvider {
 
-    private final static String AUTHORITY = "mg.rajras.truth.provider";
+    private final static String AUTHORITY = "mg.yvan.truth.provider";
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     // Contant for use with uri matcher

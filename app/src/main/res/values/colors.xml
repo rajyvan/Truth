@@ -12,6 +12,7 @@
     <color name="transparent">#00000000</color>
     <color name="orange">#F4A261</color>
     <color name="very_light_gray">#F1F1F1</color>
+    <color name="light_gray">#D3D3D3</color>
 
     <color name="colorPrimary">@color/green</color>
     <color name="colorPrimaryDark">@color/dark_green</color>
