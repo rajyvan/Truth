@@ -5,6 +5,7 @@ import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -20,6 +21,12 @@ public class VerseView extends CardView {
     TextView mTvVerse;
     @Bind(R.id.tv_num)
     TextView mTvNum;
+    @Bind(R.id.btn_share)
+    ImageButton mBtnShare;
+    @Bind(R.id.btn_favorite)
+    ImageButton mBtnFavorite;
+    @Bind(R.id.btn_comment)
+    ImageButton mBtnComment;
 
     public VerseView(Context context) {
         this(context, null);
