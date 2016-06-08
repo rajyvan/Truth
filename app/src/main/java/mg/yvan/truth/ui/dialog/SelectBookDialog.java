@@ -1,24 +1,28 @@
 package mg.yvan.truth.ui.dialog;
 
+import android.app.Dialog;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ViewFlipper;
 
@@ -43,20 +47,26 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
 
     @Bind(R.id.btn_back)
     ImageButton mBtnBack;
-    @Bind(R.id.et_search)
-    EditText mEtSearch;
     @Bind(R.id.book_recycler)
     RecyclerView mBookRecycler;
     @Bind(R.id.flipper)
     ViewFlipper mFlipper;
     @Bind(R.id.search_recycler)
     RecyclerView mSearchRecycler;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
 
     private String mCurrentSearchKey;
 
     public static void show(AppCompatActivity activity) {
         SelectBookDialog dialog = new SelectBookDialog();
         dialog.show(activity.getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -75,9 +85,19 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
         getDialog().getWindow().setLayout(width, height);
     }
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mToolbar.inflateMenu(R.menu.main_menu);
+        setupMenu();
 
         mBookRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mSearchRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -88,15 +108,20 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
                 show(FIRST_PAGE);
             }
         });
+    }
 
-        mEtSearch.addTextChangedListener(new TextWatcher() {
+    private void setupMenu() {
+        final MenuItem searchItem = mToolbar.getMenu().findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            public boolean onQueryTextChange(String charSequence) {
                 if (TextUtils.isEmpty(charSequence)) {
                     mFlipper.setVisibility(View.VISIBLE);
                     mSearchRecycler.setVisibility(View.GONE);
@@ -109,19 +134,10 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
                     mBtnBack.setVisibility(View.GONE);
                     mFlipper.setVisibility(View.GONE);
                     mSearchRecycler.setVisibility(View.VISIBLE);
-                    if (charSequence.length() > 2) {
-                        //TODO
-                        /*
-                        mCurrentSearchKey = charSequence.toString();
-                        getLoaderManager().restartLoader(SEARCH_BOOK_LOADER_ID, null, BibleFragment.this);
-                        */
-                    }
+                    mCurrentSearchKey = charSequence;
+                    getLoaderManager().restartLoader(SEARCH_BOOK_LOADER_ID, null, SelectBookDialog.this);
                 }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
+                return true;
             }
         });
     }
@@ -201,4 +217,5 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
 }
