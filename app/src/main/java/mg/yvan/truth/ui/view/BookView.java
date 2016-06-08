@@ -3,13 +3,16 @@ package mg.yvan.truth.ui.view;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnBookChangeEvent;
 import mg.yvan.truth.models.Book;
 
 /**
@@ -39,8 +42,14 @@ public class BookView extends LinearLayout {
         setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
-    public void populate(Cursor cursor) {
+    public void populate(final Cursor cursor) {
         mTvBook.setText(cursor.getString(cursor.getColumnIndex(Book.NAME)));
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new OnBookChangeEvent(cursor.getLong(cursor.getColumnIndex(Book.ID)), 0, 0));
+            }
+        });
     }
 
 }

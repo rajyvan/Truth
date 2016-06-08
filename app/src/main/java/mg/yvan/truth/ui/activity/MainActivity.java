@@ -2,6 +2,7 @@ package mg.yvan.truth.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import mg.yvan.truth.R;
 import mg.yvan.truth.manager.TruthFragmentManager;
+import mg.yvan.truth.ui.dialog.SelectBookDialog;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,6 +52,10 @@ public class MainActivity extends BaseActivity
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
+            Fragment dialogFragment = getSupportFragmentManager().findFragmentByTag(SelectBookDialog.TAG);
+            if (dialogFragment!=null) {
+
+            }
             super.onBackPressed();
         }
     }

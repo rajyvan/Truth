@@ -12,7 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import butterknife.Bind;
+import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnBookChangeEvent;
 import mg.yvan.truth.models.Book;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.ui.adapter.BiblePagerAdapter;
@@ -114,6 +116,36 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    public void onEvent(OnBookChangeEvent event) {
+        final long bookId = event.getBookId();
+        final int chapter = event.getChapter();
+        final int verse = event.getVerse();
+        if (chapter > 0 && verse > 0) {
+            selectedVerse = new Verse();
+            selectedVerse.setBookId(bookId);
+            selectedVerse.setChapter(chapter);
+            selectedVerse.setVerse(verse);
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putLong(Book.ID, bookId);
+        bundle.putLong(Verse.CHAPTER, chapter);
+        bundle.putLong(Verse.VERSE, verse);
+        getLoaderManager().restartLoader(LOADER_ID, bundle, this);
     }
 
 }

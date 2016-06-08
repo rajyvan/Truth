@@ -1,6 +1,7 @@
 package mg.yvan.truth.ui.dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,8 +31,10 @@ import android.widget.ViewFlipper;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import mg.yvan.truth.Defines;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnBookChangeEvent;
 import mg.yvan.truth.models.Book;
 import mg.yvan.truth.ui.adapter.BookAdapter;
 
@@ -39,6 +43,7 @@ import mg.yvan.truth.ui.adapter.BookAdapter;
  */
 public class SelectBookDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String TAG = "select_book_dialog";
     private static final int FIRST_PAGE = 0;
     private static final int SECOND_PAGE = 1;
     private static final int BOOK_CONTENT_LOADER_ID = 2;
@@ -60,7 +65,7 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
 
     public static void show(AppCompatActivity activity) {
         SelectBookDialog dialog = new SelectBookDialog();
-        dialog.show(activity.getSupportFragmentManager(), null);
+        dialog.show(activity.getSupportFragmentManager(), TAG);
     }
 
     @Override
@@ -83,6 +88,28 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
         int width = getResources().getDisplayMetrics().widthPixels;
         int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.85f);
         getDialog().getWindow().setLayout(width, height);
+
+        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(android.content.DialogInterface dialog, int keyCode,
+                                 android.view.KeyEvent event) {
+
+                if ((keyCode == android.view.KeyEvent.KEYCODE_BACK)) {
+                    //This is the filter
+                    if (event.getAction() != KeyEvent.ACTION_DOWN)
+                        return true;
+                    else {
+                        if (mFlipper.getDisplayedChild() != FIRST_PAGE) {
+                            show(FIRST_PAGE);
+                        } else {
+                            dismiss();
+                        }
+                        return true;
+                    }
+                } else
+                    return false;
+            }
+        });
     }
 
     @NonNull
@@ -108,6 +135,22 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
                 show(FIRST_PAGE);
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    public void onEvent(OnBookChangeEvent event) {
+        dismiss();
     }
 
     private void setupMenu() {
