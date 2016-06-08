@@ -66,4 +66,8 @@ public class BiblePagerAdapter extends FragmentStatePagerAdapter {
         return count;
     }
 
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return String.valueOf(position + 1);
+    }
 }

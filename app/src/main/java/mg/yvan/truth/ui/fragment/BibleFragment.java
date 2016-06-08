@@ -11,6 +11,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.astuetz.PagerSlidingTabStrip;
+
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
@@ -31,6 +33,8 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
     ViewPager mViewPager;
     @Bind(R.id.fab)
     FloatingActionButton mFab;
+    @Bind(R.id.tab_strip)
+    PagerSlidingTabStrip mTabStrip;
 
     private BiblePagerAdapter mAdapter;
     private Book mCurrentBook;
@@ -90,6 +94,7 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
                     Book book = new Book().fromCursor(cursor);
                     mAdapter = new BiblePagerAdapter(getChildFragmentManager(), getActivity(), book, currentChapter, currentVerse);
                     mViewPager.setAdapter(mAdapter);
+                    mTabStrip.setViewPager(mViewPager);
                     mViewPager.setCurrentItem(currentChapter - 1);
                     mCurrentBook = book;
 

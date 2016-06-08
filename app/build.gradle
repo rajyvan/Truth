@@ -34,4 +34,5 @@ dependencies {
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.6'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }
