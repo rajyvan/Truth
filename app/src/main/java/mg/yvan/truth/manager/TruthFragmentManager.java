@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import mg.yvan.truth.R;
 import mg.yvan.truth.ui.fragment.BibleFragment;
+import mg.yvan.truth.ui.fragment.SearchResultFragment;
 
 /**
  * Created by Yvan on 26/10/15.
@@ -53,22 +54,20 @@ public class TruthFragmentManager {
         changeFragment(activity, new BibleFragment(), R.id.fragment_container, false, null);
     }
 
-    /*public static void displaySettings(AppCompatActivity activity) {
-        if (!(getCurrentFragment(activity) instanceof SettingsFragment)) {
-            changeFragment(activity, new SettingsFragment(), R.id.fragment_container, true, null,
-                    R.anim.translate_top_in,
-                    R.anim.translate_top_out,
-                    R.anim.translate_bottom_in,
-                    R.anim.translate_bottom_out);
+    public static void displaySearchResult(AppCompatActivity activity, String key) {
+        if (!(getCurrentFragment(activity) instanceof SearchResultFragment)) {
+            changeFragment(activity, SearchResultFragment.newInstance(key), R.id.fragment_container, true, null);
         }
-    }*/
+    }
 
-    /*public static void displayBonusDetail(AppCompatActivity activity, Bonus bonus) {
-        changeFragment(activity, BonusDetailFragment.newInstance(bonus), R.id.fragment_container, true, null,
-                R.anim.translate_left_in,
-                R.anim.translate_left_out,
-                R.anim.translate_right_in,
-                R.anim.translate_right_out);
+    /*public static void displaySearchResult(AppCompatActivity activity, String key) {
+        if (!(getCurrentFragment(activity) instanceof SearchResultFragment)) {
+            changeFragment(activity, SearchResultFragment.newInstance(key), R.id.fragment_container, true, null,
+                    R.anim.translate_left_in,
+                    R.anim.translate_left_out,
+                    R.anim.translate_right_in,
+                    R.anim.translate_right_out);
+        }
     }*/
 
 }

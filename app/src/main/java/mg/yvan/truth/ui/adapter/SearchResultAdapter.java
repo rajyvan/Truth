@@ -5,21 +5,28 @@ import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import java.text.Normalizer;
+
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.ui.view.VerseView;
 
 /**
  * Created by Yvan on 31/05/16.
  */
-public class VerseAdapter extends CursorRecyclerViewAdapter<VerseAdapter.VerseViewHolder> {
+public class SearchResultAdapter extends CursorRecyclerViewAdapter<SearchResultAdapter.VerseViewHolder> {
 
-    public VerseAdapter(Context context, Cursor cursor) {
+    private String mKey;
+
+    public SearchResultAdapter(Context context, Cursor cursor, String key) {
         super(context, cursor);
+        String normalizedKey = Normalizer.normalize(key, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "");
+        mKey = normalizedKey;
     }
 
     @Override
     public void onBindViewHolder(VerseViewHolder viewHolder, Cursor cursor) {
-        viewHolder.mVerseView.populate(new Verse().fromCursor(cursor));
+        viewHolder.mVerseView.populate(new Verse().fromCursor(cursor), mKey);
     }
 
     @Override

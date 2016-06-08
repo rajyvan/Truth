@@ -19,4 +19,10 @@
     <string name="new_testament">Nouveau testament</string>
 
     <string name="nb_book">%d livres</string>
+
+    <plurals name="nb_results">
+        <item quantity="zero">%d résultat</item>
+        <item quantity="one">%d résultat</item>
+        <item quantity="other">%d résultats</item>
+    </plurals>
 </resources>

@@ -60,4 +60,15 @@
         android:background="@null"
         android:src="@drawable/comment"/>
 
+    <TextView
+        android:id="@+id/tv_ref"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line"
+        android:layout_toLeftOf="@id/btn_comment"
+        android:inputType="text"
+        android:textColor="@color/dark_green"
+        android:textSize="14sp"
+        tools:text="Genese 1:21"/>
+
 </RelativeLayout>

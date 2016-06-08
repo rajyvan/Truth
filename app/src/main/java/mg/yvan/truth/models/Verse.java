@@ -29,6 +29,7 @@ public class Verse {
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.mg.rajras.truth.provider.verse";
     public static final String[] PROJECTION_ALL = {ID, BOOK_ID, CHAPTER, VERSE, TEXT, NORMALIZED_TEXT, READ, FAVORITE, COMMENT};
     public static final String SORT_ORDER_DEFAULT = VERSE + " ASC";
+    private final static String REF_FORMAT = "%s %d:%d";
     private long id;
     private long bookId;
     private int chapter;
@@ -129,7 +130,7 @@ public class Verse {
         Cursor cursor = context.getContentResolver().query(Book.CONTENT_URI, Book.PROJECTION_ALL, selection, null, null);
         if (cursor.moveToFirst()) {
             final Book book = new Book().fromCursor(cursor);
-            return book.getName() + ", Chap. " + chapter + " : " + verse;
+            return String.format(REF_FORMAT, book.getName(), chapter, verse);
         }
         return "";
     }

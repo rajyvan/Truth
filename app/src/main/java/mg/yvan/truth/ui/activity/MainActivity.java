@@ -1,5 +1,8 @@
 package mg.yvan.truth.ui.activity;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,13 +12,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import butterknife.Bind;
+import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnSearchQueryChange;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.ui.dialog.SelectBookDialog;
+import mg.yvan.truth.ui.fragment.SearchResultFragment;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,6 +52,21 @@ public class MainActivity extends BaseActivity
         mNavView.setNavigationItemSelectedListener(this);
 
         TruthFragmentManager.displayBible(this);
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            TruthFragmentManager.displaySearchResult(MainActivity.this, query);
+            EventBus.getDefault().post(new OnSearchQueryChange(query));
+        }
     }
 
     @Override
@@ -53,7 +75,7 @@ public class MainActivity extends BaseActivity
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             Fragment dialogFragment = getSupportFragmentManager().findFragmentByTag(SelectBookDialog.TAG);
-            if (dialogFragment!=null) {
+            if (dialogFragment != null) {
 
             }
             super.onBackPressed();
@@ -66,17 +88,28 @@ public class MainActivity extends BaseActivity
 
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //TODO search
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                return false;
+                if (TextUtils.isEmpty(s)) {
+                    Fragment currentFragment = TruthFragmentManager.getCurrentFragment(MainActivity.this);
+                    if (currentFragment != null && currentFragment instanceof SearchResultFragment) {
+                        onBackPressed();
+                    }
+                } else {
+                    TruthFragmentManager.displaySearchResult(MainActivity.this, s);
+                    EventBus.getDefault().post(new OnSearchQueryChange(s));
+                }
+                return true;
             }
         });
 
