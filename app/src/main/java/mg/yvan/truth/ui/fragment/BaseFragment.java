@@ -31,5 +31,9 @@ public abstract class BaseFragment extends Fragment {
         ButterKnife.unbind(this);
         super.onDestroy();
     }
+
+    protected void setTitle(String title) {
+        getActivity().setTitle(title);
+    }
 }
 

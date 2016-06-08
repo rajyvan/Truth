@@ -28,6 +28,7 @@ import mg.yvan.truth.ui.dialog.SelectBookDialog;
 public class BibleFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 1;
+    private static final String TITLE_FORMAT = "%s %d/%d";
 
     @Bind(R.id.viewpager)
     ViewPager mViewPager;
@@ -46,6 +47,22 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
         mViewPager.setOffscreenPageLimit(5);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                setTitle(String.format(TITLE_FORMAT, mCurrentBook.getName(), position + 1, mAdapter.getCount()));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +70,7 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
                 SelectBookDialog.show((AppCompatActivity) getActivity());
             }
         });
+
 
     }
 
@@ -91,26 +109,13 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
                         currentVerse = selectedVerse.getVerse();
                     }
 
-                    Book book = new Book().fromCursor(cursor);
-                    mAdapter = new BiblePagerAdapter(getChildFragmentManager(), getActivity(), book, currentChapter, currentVerse);
+                    mCurrentBook = new Book().fromCursor(cursor);
+                    mAdapter = new BiblePagerAdapter(getChildFragmentManager(), getActivity(), mCurrentBook, currentChapter, currentVerse);
                     mViewPager.setAdapter(mAdapter);
                     mTabStrip.setViewPager(mViewPager);
                     mViewPager.setCurrentItem(currentChapter - 1);
-                    mCurrentBook = book;
 
-                /*titleTextView.setText(book.getName());
-                chapterTextView.setText("Chap " + (currentChapter + 1) + " / " + mAdapter.getCount());
-                titleTextView.setText(book.getName());
-                setCurrentBookGrid();
-
-                if (slidingMenu.isMenuShowing())
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            slidingMenu.toggle();
-                        }
-                    }, 300);
-                    */
+                    setTitle(String.format(TITLE_FORMAT, mCurrentBook.getName(), currentChapter + 1, mAdapter.getCount()));
                 }
             }
             selectedVerse = null;

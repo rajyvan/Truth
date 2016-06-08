@@ -42,12 +42,13 @@ public class BookView extends LinearLayout {
         setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
-    public void populate(final Cursor cursor) {
+    public void populate(Cursor cursor) {
+        final Book book = new Book().fromCursor(cursor);
         mTvBook.setText(cursor.getString(cursor.getColumnIndex(Book.NAME)));
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().post(new OnBookChangeEvent(cursor.getLong(cursor.getColumnIndex(Book.ID)), 0, 0));
+                EventBus.getDefault().post(new OnBookChangeEvent(book.getId(), 0, 0));
             }
         });
     }
