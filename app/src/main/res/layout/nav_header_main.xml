@@ -18,10 +18,10 @@
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_centerInParent="true"
-        android:src="@android:drawable/sym_def_app_icon"
+        android:src="@drawable/book_placeholder"
         app:civ_border_color="@color/white"
         app:civ_border_width="3dp"
-        app:civ_fill_color="@color/very_light_gray"/>
+        app:civ_fill_color="@color/green"/>
 
     <TextView
         android:id="@+id/tv_name"
@@ -33,7 +33,7 @@
         android:gravity="center"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:text="Android Studio"
+        android:text="@string/anonyme"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/green"
         android:textSize="22sp"/>

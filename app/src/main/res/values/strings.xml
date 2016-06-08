@@ -19,6 +19,7 @@
     <string name="new_testament">Nouveau testament</string>
 
     <string name="nb_book">%d livres</string>
+    <string name="anonyme">Anonyme</string>
 
     <plurals name="nb_results">
         <item quantity="zero">%d résultat</item>
