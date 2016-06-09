@@ -2,6 +2,8 @@
 <manifest package="mg.yvan.truth"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".TruthApplication"
         android:allowBackup="true"
@@ -12,8 +14,8 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -21,15 +23,24 @@
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable"/>
         </activity>
 
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
         <provider
             android:name="mg.yvan.truth.provider.BibleContentProvider"
             android:authorities="mg.yvan.truth.provider"/>
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+                   android:value="@string/facebook_app_id"/>
     </application>
 
 </manifest>

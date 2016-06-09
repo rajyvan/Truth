@@ -13,13 +13,31 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnSearchQueryChange;
+import mg.yvan.truth.manager.SessionManager;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.ui.dialog.SelectBookDialog;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
@@ -34,6 +52,16 @@ public class MainActivity extends BaseActivity
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
+    private ImageView mIvProfilePhoto;
+    private TextView mTvProfileName;
+
+    private ProfileTracker mProfileTracker;
+    private AccessTokenTracker mAccessTokenTracker;
+
+    private MenuItem mGoogleMenuItem;
+    private MenuItem mFacebookMenuItem;
+    private MenuItem mLogoutMenuItem;
+
     @Override
     protected int getLayout() {
         return R.layout.activity_main;
@@ -44,6 +72,10 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setSupportActionBar(mToolbar);
 
+        final View headerView = mNavView.getHeaderView(0);
+        mIvProfilePhoto = (ImageView) headerView.findViewById(R.id.iv_photo);
+        mTvProfileName = (TextView) headerView.findViewById(R.id.tv_name);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.setDrawerListener(toggle);
@@ -53,6 +85,100 @@ public class MainActivity extends BaseActivity
 
         TruthFragmentManager.displayBible(this);
         handleIntent(getIntent());
+
+        configureMenu();
+
+        mProfileTracker = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+                setProfile(currentProfile);
+            }
+        };
+
+        mAccessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(
+                    AccessToken oldAccessToken,
+                    AccessToken currentAccessToken) {
+                // On AccessToken changes fetch the new profile which fires the event on
+                // the ProfileTracker if the profile is different
+                Profile.fetchProfileForCurrentAccessToken();
+                updateMenuItemsVisibility();
+            }
+        };
+        Profile.fetchProfileForCurrentAccessToken();
+        setProfile(Profile.getCurrentProfile());
+    }
+
+    private void configureMenu() {
+        mNavView.setItemIconTintList(null);
+        final MenuItem identityItem = mNavView.getMenu().findItem(R.id.identity);
+        identityItem.setTitle(SessionManager.getInstance().isLogged() ? R.string.indentity : R.string.login);
+
+        mGoogleMenuItem = mNavView.getMenu().findItem(R.id.login_google);
+        mFacebookMenuItem = mNavView.getMenu().findItem(R.id.login_facebook);
+        mLogoutMenuItem = mNavView.getMenu().findItem(R.id.nav_logout);
+        updateMenuItemsVisibility();
+
+        mLogoutMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                LoginManager.getInstance().logOut();
+                return true;
+            }
+        });
+
+        mGoogleMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return false;
+            }
+        });
+
+        mFacebookMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                List<String> permissions = Arrays.asList(getResources().getStringArray(R.array.facebook_permissions));
+                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Profile.fetchProfileForCurrentAccessToken();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d("Facebook connect", "Canceled");
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.d("Facebook connect", "Error: " + error.getLocalizedMessage());
+                    }
+                });
+                LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, permissions);
+                return true;
+            }
+        });
+    }
+
+    private void updateMenuItemsVisibility() {
+        mGoogleMenuItem.setVisible(!SessionManager.getInstance().isLogged());
+        mFacebookMenuItem.setVisible(!SessionManager.getInstance().isLogged());
+        mLogoutMenuItem.setVisible(SessionManager.getInstance().isLogged());
+    }
+
+    private void setProfile(Profile profile) {
+        if (!isFinishing()) {
+            if (profile != null) {
+                mTvProfileName.setText(profile.getName());
+                final int photoSize = getResources().getDimensionPixelSize(R.dimen.photo_size);
+                Glide.with(this).load(profile.getProfilePictureUri(photoSize, photoSize)).into(mIvProfilePhoto);
+                updateMenuItemsVisibility();
+            } else {
+                mTvProfileName.setText(R.string.anonyme);
+                mIvProfilePhoto.setImageResource(R.mipmap.ic_launcher);
+            }
+        }
     }
 
     @Override

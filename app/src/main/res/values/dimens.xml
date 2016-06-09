@@ -9,4 +9,5 @@
     <dimen name="card_radius">2dp</dimen>
     <dimen name="card_elevation">0dp</dimen>
     <dimen name="panel_handle">80dp</dimen>
+    <dimen name="photo_size">72dp</dimen>
 </resources>

@@ -15,8 +15,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_photo"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="@dimen/photo_size"
+        android:layout_height="@dimen/photo_size"
         android:layout_centerInParent="true"
         android:src="@drawable/book_placeholder"
         app:civ_border_color="@color/white"

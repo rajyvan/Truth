@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
 import java.io.IOException;
 
@@ -26,6 +27,7 @@ public class TruthApplication extends Application {
         appContext = this;
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
         try {
             new BibleDbOpenHelper(this).createDataBase();
