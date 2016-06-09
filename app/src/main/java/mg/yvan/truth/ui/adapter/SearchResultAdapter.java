@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import java.text.Normalizer;
 
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.ui.view.VerseView;
 
 /**
@@ -26,7 +26,7 @@ public class SearchResultAdapter extends CursorRecyclerViewAdapter<SearchResultA
 
     @Override
     public void onBindViewHolder(VerseViewHolder viewHolder, Cursor cursor) {
-        viewHolder.mVerseView.populate(new Verse().fromCursor(cursor), mKey);
+        viewHolder.mVerseView.populate(new DataVerse().fromCursor(cursor), mKey);
     }
 
     @Override

@@ -17,8 +17,8 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnBookChangeEvent;
-import mg.yvan.truth.models.Book;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataBook;
+import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.ui.adapter.BiblePagerAdapter;
 import mg.yvan.truth.ui.dialog.SelectBookDialog;
 
@@ -38,8 +38,8 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
     PagerSlidingTabStrip mTabStrip;
 
     private BiblePagerAdapter mAdapter;
-    private Book mCurrentBook;
-    private Verse selectedVerse;
+    private DataBook mCurrentBook;
+    private DataVerse selectedVerse;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -88,10 +88,10 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         long bookId = 1;
         if (bundle != null) {
-            bookId = bundle.getLong(Book.ID);
+            bookId = bundle.getLong(DataBook.ID);
         }
-        String selection = Book.ID + "=" + bookId;
-        return new CursorLoader(getActivity(), Book.CONTENT_URI, null, selection, null, null);
+        String selection = DataBook.ID + "=" + bookId;
+        return new CursorLoader(getActivity(), DataBook.CONTENT_URI, null, selection, null, null);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
                         currentVerse = selectedVerse.getVerse();
                     }
 
-                    mCurrentBook = new Book().fromCursor(cursor);
+                    mCurrentBook = new DataBook().fromCursor(cursor);
                     mAdapter = new BiblePagerAdapter(getChildFragmentManager(), getActivity(), mCurrentBook, currentChapter, currentVerse);
                     mViewPager.setAdapter(mAdapter);
                     mTabStrip.setViewPager(mViewPager);
@@ -145,16 +145,16 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
         final int chapter = event.getChapter();
         final int verse = event.getVerse();
         if (chapter > 0 && verse > 0) {
-            selectedVerse = new Verse();
+            selectedVerse = new DataVerse();
             selectedVerse.setBookId(bookId);
             selectedVerse.setChapter(chapter);
             selectedVerse.setVerse(verse);
         }
 
         Bundle bundle = new Bundle();
-        bundle.putLong(Book.ID, bookId);
-        bundle.putLong(Verse.CHAPTER, chapter);
-        bundle.putLong(Verse.VERSE, verse);
+        bundle.putLong(DataBook.ID, bookId);
+        bundle.putLong(DataVerse.CHAPTER, chapter);
+        bundle.putLong(DataVerse.VERSE, verse);
         getLoaderManager().restartLoader(LOADER_ID, bundle, this);
     }
 

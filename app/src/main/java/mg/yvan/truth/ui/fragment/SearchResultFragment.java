@@ -15,7 +15,7 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnSearchQueryChange;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.ui.adapter.SearchResultAdapter;
 
 /**
@@ -79,9 +79,9 @@ public class SearchResultFragment extends BaseFragment implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String selection = Verse.NORMALIZED_TEXT + " LIKE '%" + mCurrentSearchKey + "%'";
+        String selection = DataVerse.NORMALIZED_TEXT + " LIKE '%" + mCurrentSearchKey + "%'";
         selection = selection.replace("'", "\'");
-        return new CursorLoader(getActivity(), Verse.CONTENT_URI, Verse.PROJECTION_ALL, selection, null, Verse.BOOK_ID + " ASC, " + Verse.CHAPTER + " ASC");
+        return new CursorLoader(getActivity(), DataVerse.CONTENT_URI, DataVerse.PROJECTION_ALL, selection, null, DataVerse.BOOK_ID + " ASC, " + DataVerse.CHAPTER + " ASC");
     }
 
     @Override

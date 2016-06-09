@@ -1,4 +1,4 @@
-package mg.yvan.truth.models;
+package mg.yvan.truth.models.database;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -10,7 +10,7 @@ import mg.yvan.truth.provider.BibleContentProvider;
 /**
  * Created by raj_yvan on 12/07/2014.
  */
-public class Book {
+public class DataBook {
 
     public static final String OLD_TESTAMENT = "Ancien testament"; //1
     public static final String NEW_TESTAMENT = "Nouveau testament"; //2
@@ -94,14 +94,14 @@ public class Book {
         this.favorite = favorite;
     }
 
-    public Book fromCursor(Cursor cursor) {
-        setId(cursor.getLong(cursor.getColumnIndex(Book.ID)));
-        setBookRefId(cursor.getLong(cursor.getColumnIndex(Book.BOOK_REF_ID)));
-        setTestamentRefId(cursor.getLong(cursor.getColumnIndex(Book.TESTAMENT_REF_ID)));
-        setName(cursor.getString(cursor.getColumnIndex(Book.NAME)));
-        setNormalizedName(cursor.getString(cursor.getColumnIndex(Book.NORMALIZED_NAME)));
-        setRead(cursor.getInt(cursor.getColumnIndex(Book.READ)) > 0);
-        setFavorite(cursor.getInt(cursor.getColumnIndex(Book.FAVORITE)) > 0);
+    public DataBook fromCursor(Cursor cursor) {
+        setId(cursor.getLong(cursor.getColumnIndex(DataBook.ID)));
+        setBookRefId(cursor.getLong(cursor.getColumnIndex(DataBook.BOOK_REF_ID)));
+        setTestamentRefId(cursor.getLong(cursor.getColumnIndex(DataBook.TESTAMENT_REF_ID)));
+        setName(cursor.getString(cursor.getColumnIndex(DataBook.NAME)));
+        setNormalizedName(cursor.getString(cursor.getColumnIndex(DataBook.NORMALIZED_NAME)));
+        setRead(cursor.getInt(cursor.getColumnIndex(DataBook.READ)) > 0);
+        setFavorite(cursor.getInt(cursor.getColumnIndex(DataBook.FAVORITE)) > 0);
         return this;
     }
 

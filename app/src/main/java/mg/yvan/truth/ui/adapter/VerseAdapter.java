@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.ui.view.VerseView;
 
 /**
@@ -19,7 +19,7 @@ public class VerseAdapter extends CursorRecyclerViewAdapter<VerseAdapter.VerseVi
 
     @Override
     public void onBindViewHolder(VerseViewHolder viewHolder, Cursor cursor) {
-        viewHolder.mVerseView.populate(new Verse().fromCursor(cursor));
+        viewHolder.mVerseView.populate(new DataVerse().fromCursor(cursor));
     }
 
     @Override

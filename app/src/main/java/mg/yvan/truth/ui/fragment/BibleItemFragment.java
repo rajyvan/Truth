@@ -13,7 +13,7 @@ import android.view.View;
 
 import butterknife.Bind;
 import mg.yvan.truth.R;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.ui.adapter.VerseAdapter;
 
 
@@ -40,8 +40,8 @@ public class BibleItemFragment extends BaseFragment implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            bookId = bundle.getLong(Verse.BOOK_ID);
-            chapterId = bundle.getLong(Verse.CHAPTER);
+            bookId = bundle.getLong(DataVerse.BOOK_ID);
+            chapterId = bundle.getLong(DataVerse.CHAPTER);
             defaultChapter = bundle.getInt(DEFAULT_CHAPTER);
             defaultVerse = bundle.getInt(DEFAULT_VERSE);
         }
@@ -68,7 +68,7 @@ public class BibleItemFragment extends BaseFragment implements LoaderManager.Loa
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] args = new String[]{String.valueOf(bookId), String.valueOf(chapterId)};
-        return new CursorLoader(getActivity(), Verse.CONTENT_URI, Verse.PROJECTION_ALL, Verse.BOOK_ID + " = ? AND " + Verse.CHAPTER + " = ?", args, null);
+        return new CursorLoader(getActivity(), DataVerse.CONTENT_URI, DataVerse.PROJECTION_ALL, DataVerse.BOOK_ID + " = ? AND " + DataVerse.CHAPTER + " = ?", args, null);
     }
 
     @Override

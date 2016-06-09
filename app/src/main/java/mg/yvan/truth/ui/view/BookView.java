@@ -13,7 +13,7 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnBookChangeEvent;
-import mg.yvan.truth.models.Book;
+import mg.yvan.truth.models.database.DataBook;
 
 /**
  * Created by Yvan on 31/05/16.
@@ -43,8 +43,8 @@ public class BookView extends LinearLayout {
     }
 
     public void populate(Cursor cursor) {
-        final Book book = new Book().fromCursor(cursor);
-        mTvBook.setText(cursor.getString(cursor.getColumnIndex(Book.NAME)));
+        final DataBook book = new DataBook().fromCursor(cursor);
+        mTvBook.setText(cursor.getString(cursor.getColumnIndex(DataBook.NAME)));
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

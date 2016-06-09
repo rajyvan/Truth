@@ -11,8 +11,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import mg.yvan.truth.models.Book;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataBook;
+import mg.yvan.truth.models.database.DataVerse;
 
 
 /**
@@ -57,19 +57,19 @@ public class BibleContentProvider extends ContentProvider {
         switch (URI_MATCHER.match(uri)) {
             case BOOK_LIST:
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = Book.SORT_ORDER_DEFAULT;
+                    sortOrder = DataBook.SORT_ORDER_DEFAULT;
                 }
                 break;
             case BOOK_ID:
-                builder.appendWhere(Book.ID + " = " + uri.getLastPathSegment());
+                builder.appendWhere(DataBook.ID + " = " + uri.getLastPathSegment());
                 break;
             case VERSE_LIST:
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = Verse.SORT_ORDER_DEFAULT;
+                    sortOrder = DataVerse.SORT_ORDER_DEFAULT;
                 }
                 break;
             case VERSE_ID:
-                builder.appendWhere(Verse.ID + " = " + uri.getLastPathSegment());
+                builder.appendWhere(DataVerse.ID + " = " + uri.getLastPathSegment());
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported uri: " + uri);
@@ -94,13 +94,13 @@ public class BibleContentProvider extends ContentProvider {
     public String getType(Uri uri) {
         switch (URI_MATCHER.match(uri)) {
             case BOOK_LIST:
-                return Book.CONTENT_TYPE;
+                return DataBook.CONTENT_TYPE;
             case BOOK_ID:
-                return Book.CONTENT_ITEM_TYPE;
+                return DataBook.CONTENT_ITEM_TYPE;
             case VERSE_LIST:
-                return Verse.CONTENT_TYPE;
+                return DataVerse.CONTENT_TYPE;
             case VERSE_ID:
-                return Verse.CONTENT_ITEM_TYPE;
+                return DataVerse.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }

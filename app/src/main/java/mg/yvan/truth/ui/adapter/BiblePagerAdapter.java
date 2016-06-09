@@ -7,8 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import mg.yvan.truth.models.Book;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataBook;
+import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.ui.fragment.BibleItemFragment;
 
 
@@ -18,12 +18,12 @@ import mg.yvan.truth.ui.fragment.BibleItemFragment;
 public class BiblePagerAdapter extends FragmentStatePagerAdapter {
 
     private Context context;
-    private Book book;
+    private DataBook book;
     private int defaultChapter;
     private int defaultVerse;
     private int count;
 
-    public BiblePagerAdapter(FragmentManager fm, Context context, Book book, int defaultChapter, int defaultVerse) {
+    public BiblePagerAdapter(FragmentManager fm, Context context, DataBook book, int defaultChapter, int defaultVerse) {
         super(fm);
         this.book = book;
         this.context = context;
@@ -39,8 +39,8 @@ public class BiblePagerAdapter extends FragmentStatePagerAdapter {
 
         BibleItemFragment fragment = new BibleItemFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(Verse.BOOK_ID, book.getId());
-        bundle.putLong(Verse.CHAPTER, position + 1);
+        bundle.putLong(DataVerse.BOOK_ID, book.getId());
+        bundle.putLong(DataVerse.CHAPTER, position + 1);
         bundle.putInt(BibleItemFragment.DEFAULT_CHAPTER, defaultChapter);
         bundle.putInt(BibleItemFragment.DEFAULT_VERSE, defaultVerse);
         fragment.setArguments(bundle);
@@ -54,8 +54,8 @@ public class BiblePagerAdapter extends FragmentStatePagerAdapter {
 
     private int getChapterNumber() {
         int count = 0;
-        String selection = Verse.BOOK_ID + "=" + book.getId() + ") GROUP BY (" + Verse.CHAPTER;
-        Cursor cursor = context.getContentResolver().query(Verse.CONTENT_URI, Verse.PROJECTION_ALL, selection, null, null);
+        String selection = DataVerse.BOOK_ID + "=" + book.getId() + ") GROUP BY (" + DataVerse.CHAPTER;
+        Cursor cursor = context.getContentResolver().query(DataVerse.CONTENT_URI, DataVerse.PROJECTION_ALL, selection, null, null);
         if (cursor != null) {
             try {
                 count = cursor.getCount();

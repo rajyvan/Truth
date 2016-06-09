@@ -14,7 +14,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import mg.yvan.truth.R;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataVerse;
 
 /**
  * Created by Yvan on 31/05/16.
@@ -62,11 +62,11 @@ public class VerseView extends CardView {
         setClipToPadding(false);
     }
 
-    public void populate(Verse verse) {
+    public void populate(DataVerse verse) {
         populate(verse, null);
     }
 
-    public void populate(Verse verse, String key) {
+    public void populate(DataVerse verse, String key) {
         if (TextUtils.isEmpty(key)) {
             mTvVerse.setText(verse.getText());
             mTvNum.setVisibility(VISIBLE);

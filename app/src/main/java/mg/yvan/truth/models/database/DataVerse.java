@@ -1,4 +1,4 @@
-package mg.yvan.truth.models;
+package mg.yvan.truth.models.database;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -10,7 +10,7 @@ import mg.yvan.truth.provider.BibleContentProvider;
 /**
  * Created by raj_yvan on 12/07/2014.
  */
-public class Verse {
+public class DataVerse {
 
     public static final String ID = "_id";
     public static final String BOOK_ID = "book_id";
@@ -112,24 +112,24 @@ public class Verse {
         this.comment = comment;
     }
 
-    public Verse fromCursor(Cursor cursor) {
-        setId(cursor.getLong(cursor.getColumnIndex(Verse.ID)));
-        setBookId(cursor.getLong(cursor.getColumnIndex(Verse.BOOK_ID)));
-        setChapter(cursor.getInt(cursor.getColumnIndex(Verse.CHAPTER)));
-        setVerse(cursor.getInt(cursor.getColumnIndex(Verse.VERSE)));
-        setText(cursor.getString(cursor.getColumnIndex(Verse.TEXT)));
-        setNormalizedText(cursor.getString(cursor.getColumnIndex(Verse.NORMALIZED_TEXT)));
-        setRead(cursor.getInt(cursor.getColumnIndex(Verse.READ)) > 0);
-        setFavorite(cursor.getInt(cursor.getColumnIndex(Verse.FAVORITE)) > 0);
-        setComment(cursor.getString(cursor.getColumnIndex(Verse.COMMENT)));
+    public DataVerse fromCursor(Cursor cursor) {
+        setId(cursor.getLong(cursor.getColumnIndex(DataVerse.ID)));
+        setBookId(cursor.getLong(cursor.getColumnIndex(DataVerse.BOOK_ID)));
+        setChapter(cursor.getInt(cursor.getColumnIndex(DataVerse.CHAPTER)));
+        setVerse(cursor.getInt(cursor.getColumnIndex(DataVerse.VERSE)));
+        setText(cursor.getString(cursor.getColumnIndex(DataVerse.TEXT)));
+        setNormalizedText(cursor.getString(cursor.getColumnIndex(DataVerse.NORMALIZED_TEXT)));
+        setRead(cursor.getInt(cursor.getColumnIndex(DataVerse.READ)) > 0);
+        setFavorite(cursor.getInt(cursor.getColumnIndex(DataVerse.FAVORITE)) > 0);
+        setComment(cursor.getString(cursor.getColumnIndex(DataVerse.COMMENT)));
         return this;
     }
 
     public String formatReference(Context context) {
-        String selection = Book.BOOK_REF_ID + "=" + bookId;
-        Cursor cursor = context.getContentResolver().query(Book.CONTENT_URI, Book.PROJECTION_ALL, selection, null, null);
+        String selection = DataBook.BOOK_REF_ID + "=" + bookId;
+        Cursor cursor = context.getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
         if (cursor.moveToFirst()) {
-            final Book book = new Book().fromCursor(cursor);
+            final DataBook book = new DataBook().fromCursor(cursor);
             return String.format(REF_FORMAT, book.getName(), chapter, verse);
         }
         return "";

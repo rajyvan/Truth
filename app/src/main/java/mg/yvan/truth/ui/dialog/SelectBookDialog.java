@@ -35,7 +35,7 @@ import de.greenrobot.event.EventBus;
 import mg.yvan.truth.Defines;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnBookChangeEvent;
-import mg.yvan.truth.models.Book;
+import mg.yvan.truth.models.database.DataBook;
 import mg.yvan.truth.ui.adapter.BookAdapter;
 
 /**
@@ -234,12 +234,12 @@ public class SelectBookDialog extends DialogFragment implements LoaderManager.Lo
             if (bundle != null) {
                 defaultValue = bundle.getInt(ARG_TESTAMENT);
             }
-            String selection = Book.TESTAMENT_REF_ID + "=" + (defaultValue == Defines.OLD_TESTAMENT ? 1 : 2);
-            return new CursorLoader(getActivity(), Book.CONTENT_URI, Book.PROJECTION_ALL, selection, null, null);
+            String selection = DataBook.TESTAMENT_REF_ID + "=" + (defaultValue == Defines.OLD_TESTAMENT ? 1 : 2);
+            return new CursorLoader(getActivity(), DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
         } else {
-            String selection = Book.NORMALIZED_NAME + " LIKE '%" + mCurrentSearchKey + "%'";
+            String selection = DataBook.NORMALIZED_NAME + " LIKE '%" + mCurrentSearchKey + "%'";
             selection = selection.replace("'", "\'");
-            return new CursorLoader(getActivity(), Book.CONTENT_URI, Book.PROJECTION_ALL, selection, null, Book.ID + " ASC");
+            return new CursorLoader(getActivity(), DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, DataBook.ID + " ASC");
         }
     }
 
