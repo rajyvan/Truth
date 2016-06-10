@@ -4,6 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_bible"
+            android:checked="true"
             android:icon="@drawable/ic_menu_bible"
             android:title="@string/menu_bible"/>
         <item
@@ -27,11 +28,6 @@
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_logout"
                 android:title="@string/logout"/>
-
-            <item
-                android:id="@+id/login_google"
-                android:icon="@drawable/google_plus"
-                android:title="@string/via_google"/>
 
             <item
                 android:id="@+id/login_facebook"

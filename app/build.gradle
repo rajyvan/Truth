@@ -1,8 +1,24 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.2.2'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "mg.yvan.truth"
@@ -35,4 +51,6 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.6'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.parse:parse-android:1.13.1'
+    compile 'com.parse:parsefacebookutils-v4-android:1.10.4@aar'
 }

@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,14 +20,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
+import com.parse.ParseFacebookUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,9 +51,7 @@ public class MainActivity extends BaseActivity
     private TextView mTvProfileName;
 
     private ProfileTracker mProfileTracker;
-    private AccessTokenTracker mAccessTokenTracker;
 
-    private MenuItem mGoogleMenuItem;
     private MenuItem mFacebookMenuItem;
     private MenuItem mLogoutMenuItem;
 
@@ -95,17 +88,6 @@ public class MainActivity extends BaseActivity
             }
         };
 
-        mAccessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(
-                    AccessToken oldAccessToken,
-                    AccessToken currentAccessToken) {
-                // On AccessToken changes fetch the new profile which fires the event on
-                // the ProfileTracker if the profile is different
-                Profile.fetchProfileForCurrentAccessToken();
-                updateMenuItemsVisibility();
-            }
-        };
         Profile.fetchProfileForCurrentAccessToken();
         setProfile(Profile.getCurrentProfile());
     }
@@ -115,54 +97,28 @@ public class MainActivity extends BaseActivity
         final MenuItem identityItem = mNavView.getMenu().findItem(R.id.identity);
         identityItem.setTitle(SessionManager.getInstance().isLogged() ? R.string.indentity : R.string.login);
 
-        mGoogleMenuItem = mNavView.getMenu().findItem(R.id.login_google);
         mFacebookMenuItem = mNavView.getMenu().findItem(R.id.login_facebook);
         mLogoutMenuItem = mNavView.getMenu().findItem(R.id.nav_logout);
         updateMenuItemsVisibility();
 
-        mLogoutMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                LoginManager.getInstance().logOut();
-                return true;
-            }
+        mLogoutMenuItem.setOnMenuItemClickListener(item -> {
+            LoginManager.getInstance().logOut();
+            return true;
         });
 
-        mGoogleMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return false;
-            }
-        });
+        mFacebookMenuItem.setOnMenuItemClickListener(item -> {
+            List<String> permissions = Arrays.asList(getResources().getStringArray(R.array.facebook_permissions));
 
-        mFacebookMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                List<String> permissions = Arrays.asList(getResources().getStringArray(R.array.facebook_permissions));
-                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        Profile.fetchProfileForCurrentAccessToken();
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Log.d("Facebook connect", "Canceled");
-                    }
-
-                    @Override
-                    public void onError(FacebookException error) {
-                        Log.d("Facebook connect", "Error: " + error.getLocalizedMessage());
-                    }
-                });
-                LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, permissions);
-                return true;
-            }
+            ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, (user, e) -> {
+                if (e == null) {
+                    Profile.fetchProfileForCurrentAccessToken();
+                }
+            });
+            return true;
         });
     }
 
     private void updateMenuItemsVisibility() {
-        mGoogleMenuItem.setVisible(!SessionManager.getInstance().isLogged());
         mFacebookMenuItem.setVisible(!SessionManager.getInstance().isLogged());
         mLogoutMenuItem.setVisible(SessionManager.getInstance().isLogged());
     }
@@ -179,6 +135,7 @@ public class MainActivity extends BaseActivity
                 mIvProfilePhoto.setImageResource(R.mipmap.ic_launcher);
             }
         }
+        updateMenuItemsVisibility();
     }
 
     @Override
