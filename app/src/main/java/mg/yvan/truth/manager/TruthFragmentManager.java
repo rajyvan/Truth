@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import mg.yvan.truth.R;
 import mg.yvan.truth.ui.fragment.BibleFragment;
+import mg.yvan.truth.ui.fragment.CommentsFragment;
+import mg.yvan.truth.ui.fragment.MyStatisticFragment;
+import mg.yvan.truth.ui.fragment.MyVerseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
 
 /**
@@ -35,6 +38,7 @@ public class TruthFragmentManager {
                 clearBackStack(activity);
             }
             transaction.commit();
+            fm.executePendingTransactions();
         }
     }
 
@@ -52,6 +56,21 @@ public class TruthFragmentManager {
     public static void displayBible(AppCompatActivity activity) {
         clearBackStack(activity);
         changeFragment(activity, new BibleFragment(), R.id.fragment_container, false, null);
+    }
+
+    public static void displayMyVerse(AppCompatActivity activity) {
+        clearBackStack(activity);
+        changeFragment(activity, new MyVerseFragment(), R.id.fragment_container, false, null);
+    }
+
+    public static void displayComments(AppCompatActivity activity) {
+        clearBackStack(activity);
+        changeFragment(activity, new CommentsFragment(), R.id.fragment_container, false, null);
+    }
+
+    public static void displayMyStatitistic(AppCompatActivity activity) {
+        clearBackStack(activity);
+        changeFragment(activity, new MyStatisticFragment(), R.id.fragment_container, false, null);
     }
 
     public static void displaySearchResult(AppCompatActivity activity, String key) {

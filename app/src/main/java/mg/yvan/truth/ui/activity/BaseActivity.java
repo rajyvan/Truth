@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.facebook.CallbackManager;
+import com.parse.ParseFacebookUtils;
 
 import butterknife.ButterKnife;
 import mg.yvan.truth.manager.TruthFragmentManager;
@@ -19,12 +19,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected CallbackManager mCallbackManager;
-
-    public CallbackManager getCallbackManager() {
-        return mCallbackManager;
-    }
-
     protected abstract int getLayout();
 
     @Override
@@ -33,8 +27,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(getLayout());
         ButterKnife.bind(this);
-
-        mCallbackManager = CallbackManager.Factory.create();
     }
 
     @Override
@@ -44,7 +36,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+        ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         Fragment currentFragment = TruthFragmentManager.getCurrentFragment(this);
         if (currentFragment != null) {

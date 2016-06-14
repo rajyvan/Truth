@@ -64,12 +64,7 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
             }
         });
 
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SelectBookDialog.show((AppCompatActivity) getActivity());
-            }
-        });
+        mFab.setOnClickListener(v -> SelectBookDialog.show((AppCompatActivity) getActivity()));
 
 
     }

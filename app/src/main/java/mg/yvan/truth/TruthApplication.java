@@ -39,6 +39,7 @@ public class TruthApplication extends Application {
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(Defines.PARSE_APP_ID)
+                .clientKey(null)
                 .server(Defines.PARSE_SERVER_URL)
                 .build()
         );

@@ -1,5 +1,6 @@
 package mg.yvan.truth.ui.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.text.SpannableString;
@@ -10,6 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.facebook.share.ShareApi;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -78,6 +83,15 @@ public class VerseView extends CardView {
             mTvRef.setText(verse.formatReference(getContext()));
         }
         mTvNum.setText(String.valueOf(verse.getVerse()));
+
+        mBtnShare.setOnClickListener(v -> {
+            ShareLinkContent content = new ShareLinkContent.Builder()
+                    .setContentTitle("Truth")
+                    .setContentDescription(verse.getText())
+                    .build();
+            ShareDialog shareDialog = new ShareDialog((Activity) getContext());
+            shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+        });
     }
 
     private SpannableString highLight(Context context, String text, String normalizedText, String searchKey) {

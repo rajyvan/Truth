@@ -8,7 +8,7 @@ public class Defines {
     public final static int OLD_TESTAMENT = 39;
     public final static int NEW_TESTAMENT = 27;
 
-    public final static String PARSE_APP_ID = "truth_server";
-    public final static String PARSE_SERVER_URL = "http://localhost:1337/parse/";
+    public final static String PARSE_APP_ID = "truth";
+    public final static String PARSE_SERVER_URL = "http://92.222.71.163:3001/truth/";
 
 }

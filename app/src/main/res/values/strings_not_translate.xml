@@ -4,6 +4,6 @@
 
     <string-array name="facebook_permissions">
         <item>public_profile</item>
-        <item>user_about_me</item>
+        <item>email</item>
     </string-array>
 </resources>

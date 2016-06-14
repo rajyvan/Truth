@@ -20,10 +20,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseUser;
+
+import org.json.JSONException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +42,7 @@ import mg.yvan.truth.event.OnSearchQueryChange;
 import mg.yvan.truth.manager.SessionManager;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.ui.dialog.SelectBookDialog;
+import mg.yvan.truth.ui.fragment.BaseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
 
 public class MainActivity extends BaseActivity
@@ -88,8 +96,22 @@ public class MainActivity extends BaseActivity
             }
         };
 
-        Profile.fetchProfileForCurrentAccessToken();
-        setProfile(Profile.getCurrentProfile());
+        final Profile profile = Profile.getCurrentProfile();
+        if (profile == null) {
+            Profile.fetchProfileForCurrentAccessToken();
+        } else {
+            setProfile(Profile.getCurrentProfile());
+        }
+        configureBackStackListener();
+    }
+
+    private void configureBackStackListener() {
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            final BaseFragment fragment = (BaseFragment) TruthFragmentManager.getCurrentFragment(MainActivity.this);
+            if (fragment != null) {
+                setTitle(fragment.getTitle());
+            }
+        });
     }
 
     private void configureMenu() {
@@ -109,9 +131,28 @@ public class MainActivity extends BaseActivity
         mFacebookMenuItem.setOnMenuItemClickListener(item -> {
             List<String> permissions = Arrays.asList(getResources().getStringArray(R.array.facebook_permissions));
 
-            ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, (user, e) -> {
-                if (e == null) {
-                    Profile.fetchProfileForCurrentAccessToken();
+            ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
+                @Override
+                public void done(ParseUser user, ParseException e) {
+                    if (e == null) {
+
+                        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), (object, response) -> {
+                            try {
+                                String mail = object.getString("email");
+                                user.setEmail(mail);
+                                user.saveEventually();
+                            } catch (JSONException e1) {
+                                // do nothing
+                            }
+                        });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "email");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+                        Profile.fetchProfileForCurrentAccessToken();
+                    } else {
+                        ParseUser.logOutInBackground();
+                    }
                 }
             });
             return true;
@@ -124,10 +165,12 @@ public class MainActivity extends BaseActivity
     }
 
     private void setProfile(Profile profile) {
+
+        final int photoSize = getResources().getDimensionPixelSize(R.dimen.photo_size);
+
         if (!isFinishing()) {
             if (profile != null) {
                 mTvProfileName.setText(profile.getName());
-                final int photoSize = getResources().getDimensionPixelSize(R.dimen.photo_size);
                 Glide.with(this).load(profile.getProfilePictureUri(photoSize, photoSize)).into(mIvProfilePhoto);
                 updateMenuItemsVisibility();
             } else {
@@ -136,6 +179,14 @@ public class MainActivity extends BaseActivity
             }
         }
         updateMenuItemsVisibility();
+
+        final ParseUser user = ParseUser.getCurrentUser();
+        if (profile != null && user != null) {
+            user.setUsername(profile.getName());
+            user.put("photo", profile.getProfilePictureUri(photoSize, photoSize).toString());
+            //user.setEmail(profile.get);
+            user.saveEventually();
+        }
     }
 
     @Override
@@ -206,17 +257,14 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_bible) {
-            // Handle the camera action
+            TruthFragmentManager.displayBible(this);
         } else if (id == R.id.nav_verse) {
-
+            TruthFragmentManager.displayMyVerse(this);
         } else if (id == R.id.nav_comment) {
-
+            TruthFragmentManager.displayComments(this);
         } else if (id == R.id.nav_statistics) {
-
-        } else if (id == R.id.nav_logout) {
-
+            TruthFragmentManager.displayMyStatitistic(this);
         }
-
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }

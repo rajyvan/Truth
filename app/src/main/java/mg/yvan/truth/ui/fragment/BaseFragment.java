@@ -18,11 +18,18 @@ public abstract class BaseFragment extends Fragment {
 
     public abstract int getTitle();
 
+    protected void setTitle(String title) {
+        getActivity().setTitle(title);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getLayout(), container, false);
         ButterKnife.bind(this, view);
+        if (getTitle() > 0) {
+            setTitle(getString(getTitle()));
+        }
         return view;
     }
 
@@ -30,10 +37,6 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroy() {
         ButterKnife.unbind(this);
         super.onDestroy();
-    }
-
-    protected void setTitle(String title) {
-        getActivity().setTitle(title);
     }
 }
 
