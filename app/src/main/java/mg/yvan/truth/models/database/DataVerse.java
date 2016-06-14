@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import io.realm.Realm;
+import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.provider.BibleContentProvider;
 
 /**
@@ -19,7 +21,6 @@ public class DataVerse {
     public static final String TEXT = "text";
     public static final String NORMALIZED_TEXT = "normalized_text";
     public static final String READ = "read";
-    public static final String FAVORITE = "favorite";
     public static final String COMMENT = "comment";
     /**
      * DATABASE UTILS
@@ -27,7 +28,7 @@ public class DataVerse {
     public static final Uri CONTENT_URI = Uri.withAppendedPath(BibleContentProvider.CONTENT_URI, "verse");
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.mg.rajras.truth.provider.verse";
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.mg.rajras.truth.provider.verse";
-    public static final String[] PROJECTION_ALL = {ID, BOOK_ID, CHAPTER, VERSE, TEXT, NORMALIZED_TEXT, READ, FAVORITE, COMMENT};
+    public static final String[] PROJECTION_ALL = {ID, BOOK_ID, CHAPTER, VERSE, TEXT, NORMALIZED_TEXT, READ, COMMENT};
     public static final String SORT_ORDER_DEFAULT = VERSE + " ASC";
     private final static String REF_FORMAT = "%s %d:%d";
     private long id;
@@ -96,14 +97,6 @@ public class DataVerse {
         this.read = read;
     }
 
-    public boolean isFavorite() {
-        return favorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
-    }
-
     public String getComment() {
         return comment;
     }
@@ -120,7 +113,6 @@ public class DataVerse {
         setText(cursor.getString(cursor.getColumnIndex(DataVerse.TEXT)));
         setNormalizedText(cursor.getString(cursor.getColumnIndex(DataVerse.NORMALIZED_TEXT)));
         setRead(cursor.getInt(cursor.getColumnIndex(DataVerse.READ)) > 0);
-        setFavorite(cursor.getInt(cursor.getColumnIndex(DataVerse.FAVORITE)) > 0);
         setComment(cursor.getString(cursor.getColumnIndex(DataVerse.COMMENT)));
         return this;
     }
@@ -133,6 +125,39 @@ public class DataVerse {
             return String.format(REF_FORMAT, book.getName(), chapter, verse);
         }
         return "";
+    }
+
+    public boolean isFavorite() {
+        return RealmHelper.getInstance().getRealmForMainThread()
+                .where(Verse.class)
+                .equalTo(Verse.BOOK_ID, bookId)
+                .equalTo(Verse.CHAPTER, chapter)
+                .equalTo(Verse.VERSE, verse)
+                .findFirst() != null;
+    }
+
+    public void addToFavorite() {
+        Realm realm = RealmHelper.getInstance().getRealmForMainThread();
+        realm.beginTransaction();
+        final Verse localVerse = realm.createObject(Verse.class);
+        localVerse.setBookId((int) bookId);
+        localVerse.setChapter(chapter);
+        localVerse.setVerse(verse);
+        realm.commitTransaction();
+    }
+
+    public void removeFromFavorite() {
+        Realm realm = RealmHelper.getInstance().getRealmForMainThread();
+        realm.beginTransaction();
+        Verse localVerse = RealmHelper.getInstance().getRealmForMainThread()
+                .where(Verse.class)
+                .equalTo(Verse.BOOK_ID, bookId)
+                .equalTo(Verse.CHAPTER, chapter)
+                .equalTo(Verse.VERSE, verse).findFirst();
+        if (localVerse != null) {
+            localVerse.deleteFromRealm();
+        }
+        realm.commitTransaction();
     }
 
 }

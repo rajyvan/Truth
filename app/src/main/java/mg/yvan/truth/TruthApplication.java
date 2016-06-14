@@ -7,9 +7,14 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
 
 import java.io.IOException;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import mg.yvan.truth.models.Comment;
+import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.provider.BibleDbOpenHelper;
 
 /**
@@ -43,9 +48,14 @@ public class TruthApplication extends Application {
                 .server(Defines.PARSE_SERVER_URL)
                 .build()
         );
-
         Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
+
         ParseFacebookUtils.initialize(this);
+
+        RealmConfiguration configuration = new RealmConfiguration.Builder(this)
+                .schemaVersion(1)
+                .build();
+        Realm.setDefaultConfiguration(configuration);
     }
 
 }

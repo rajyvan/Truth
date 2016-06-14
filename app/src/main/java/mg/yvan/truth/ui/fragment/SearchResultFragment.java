@@ -50,7 +50,7 @@ public class SearchResultFragment extends BaseFragment implements LoaderManager.
 
     @Override
     public int getTitle() {
-        return 0;
+        return R.string.search_result;
     }
 
     @Override

@@ -29,11 +29,13 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 import org.json.JSONException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -41,6 +43,7 @@ import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnSearchQueryChange;
 import mg.yvan.truth.manager.SessionManager;
 import mg.yvan.truth.manager.TruthFragmentManager;
+import mg.yvan.truth.models.database.RealmHelper;
 import mg.yvan.truth.ui.dialog.SelectBookDialog;
 import mg.yvan.truth.ui.fragment.BaseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
@@ -134,8 +137,7 @@ public class MainActivity extends BaseActivity
             ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
                 @Override
                 public void done(ParseUser user, ParseException e) {
-                    if (e == null) {
-
+                    if (e == null && user!=null) {
                         GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), (object, response) -> {
                             try {
                                 String mail = object.getString("email");
@@ -151,6 +153,7 @@ public class MainActivity extends BaseActivity
                         request.executeAsync();
                         Profile.fetchProfileForCurrentAccessToken();
                     } else {
+                        ParseUser.getCurrentUser().unpinInBackground();
                         ParseUser.logOutInBackground();
                     }
                 }
@@ -201,6 +204,12 @@ public class MainActivity extends BaseActivity
             TruthFragmentManager.displaySearchResult(MainActivity.this, query);
             EventBus.getDefault().post(new OnSearchQueryChange(query));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO sync
     }
 
     @Override
@@ -267,5 +276,11 @@ public class MainActivity extends BaseActivity
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        RealmHelper.getInstance().release();
+        super.onDestroy();
     }
 }

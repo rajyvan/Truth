@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.facebook.share.ShareApi;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 
@@ -84,6 +83,8 @@ public class VerseView extends CardView {
         }
         mTvNum.setText(String.valueOf(verse.getVerse()));
 
+        mBtnFavorite.setImageResource(verse.isFavorite() ? R.drawable.like_on : R.drawable.like_off);
+
         mBtnShare.setOnClickListener(v -> {
             ShareLinkContent content = new ShareLinkContent.Builder()
                     .setContentTitle("Truth")
@@ -91,6 +92,16 @@ public class VerseView extends CardView {
                     .build();
             ShareDialog shareDialog = new ShareDialog((Activity) getContext());
             shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+        });
+
+        mBtnFavorite.setOnClickListener(v -> {
+            if (verse.isFavorite()) {
+                mBtnFavorite.setImageResource(R.drawable.like_off);
+                verse.removeFromFavorite();
+            } else {
+                mBtnFavorite.setImageResource(R.drawable.like_on);
+                verse.addToFavorite();
+            }
         });
     }
 
