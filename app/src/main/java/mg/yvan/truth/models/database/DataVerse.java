@@ -5,7 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import java.util.Date;
+
 import io.realm.Realm;
+import mg.yvan.truth.TruthApplication;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.provider.BibleContentProvider;
 
@@ -143,6 +146,14 @@ public class DataVerse {
         localVerse.setBookId((int) bookId);
         localVerse.setChapter(chapter);
         localVerse.setVerse(verse);
+        localVerse.setText(text);
+        String selection = DataBook.BOOK_REF_ID + "=" + bookId;
+        Cursor cursor = TruthApplication.getAppContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            final DataBook book = new DataBook().fromCursor(cursor);
+            localVerse.setBook(book.getName());
+        }
+        localVerse.setDateAdded(new Date());
         realm.commitTransaction();
     }
 

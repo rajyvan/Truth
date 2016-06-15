@@ -24,10 +24,17 @@
     <string name="nb_book">%d livres</string>
     <string name="anonyme">Anonyme</string>
     <string name="search_result">Résultats de recherche</string>
+    <string name="no_favorite_verse">Aucun verset mis en favori</string>
 
     <plurals name="nb_results">
         <item quantity="zero">%d résultat</item>
         <item quantity="one">%d résultat</item>
         <item quantity="other">%d résultats</item>
+    </plurals>
+
+    <plurals name="nb_verses">
+        <item quantity="zero">%d verset</item>
+        <item quantity="one">%d verset</item>
+        <item quantity="other">%d versets</item>
     </plurals>
 </resources>

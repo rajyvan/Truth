@@ -12,9 +12,6 @@ import mg.yvan.truth.provider.BibleContentProvider;
  */
 public class DataBook {
 
-    public static final String OLD_TESTAMENT = "Ancien testament"; //1
-    public static final String NEW_TESTAMENT = "Nouveau testament"; //2
-
     public static final String ID = "_id";
     public static final String BOOK_REF_ID = "book_reference_id";
     public static final String TESTAMENT_REF_ID = "testament_reference_id";

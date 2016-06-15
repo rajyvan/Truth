@@ -28,5 +28,7 @@ public class RealmHelper {
 
     public void release() {
         mRealmMainThread.close();
+        mRealmMainThread = null;
+        singleInstance = null;
     }
 }

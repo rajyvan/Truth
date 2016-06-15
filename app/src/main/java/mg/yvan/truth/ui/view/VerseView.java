@@ -17,7 +17,10 @@ import com.facebook.share.widget.ShareDialog;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnFavoriteRemovedEvent;
+import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.models.database.DataVerse;
 
 /**
@@ -123,6 +126,24 @@ public class VerseView extends CardView {
             i = normalizedText.toLowerCase().indexOf(searchKey, end);
         }
         return formatted;
+    }
+
+    public void populate(Verse verse) {
+        mTvNum.setVisibility(GONE);
+        mTvRef.setVisibility(VISIBLE);
+        mTvVerse.setText(verse.getText());
+        mTvRef.setText(verse.formatReference(getContext()));
+        mBtnFavorite.setImageResource(R.drawable.like_on);
+        mBtnFavorite.setOnClickListener(v -> EventBus.getDefault().post(new OnFavoriteRemovedEvent(verse)));
+
+        mBtnShare.setOnClickListener(v -> {
+            ShareLinkContent content = new ShareLinkContent.Builder()
+                    .setContentTitle("Truth")
+                    .setContentDescription(verse.getText())
+                    .build();
+            ShareDialog shareDialog = new ShareDialog((Activity) getContext());
+            shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+        });
     }
 
 }
