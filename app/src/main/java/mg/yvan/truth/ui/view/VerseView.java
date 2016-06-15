@@ -19,6 +19,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnEditVerseEvent;
 import mg.yvan.truth.event.OnFavoriteRemovedEvent;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.models.database.DataVerse;
@@ -105,6 +106,11 @@ public class VerseView extends CardView {
                 mBtnFavorite.setImageResource(R.drawable.like_on);
                 verse.addToFavorite();
             }
+        });
+
+        mBtnComment.setOnClickListener(v -> {
+            final Verse localVerse = Verse.from(verse);
+            EventBus.getDefault().post(new OnEditVerseEvent(this, localVerse));
         });
     }
 

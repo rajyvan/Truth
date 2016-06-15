@@ -6,4 +6,6 @@
         <item>public_profile</item>
         <item>email</item>
     </string-array>
+
+    <string name="transition_verse">transition_verse</string>
 </resources>

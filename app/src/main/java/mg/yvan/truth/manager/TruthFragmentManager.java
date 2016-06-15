@@ -3,11 +3,18 @@ package mg.yvan.truth.manager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.view.View;
 
 import mg.yvan.truth.R;
+import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.ui.fragment.BibleFragment;
 import mg.yvan.truth.ui.fragment.CommentsFragment;
+import mg.yvan.truth.ui.fragment.EditCommentFragment;
 import mg.yvan.truth.ui.fragment.MyStatisticFragment;
 import mg.yvan.truth.ui.fragment.MyVerseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
@@ -40,6 +47,25 @@ public class TruthFragmentManager {
             transaction.commit();
             fm.executePendingTransactions();
         }
+    }
+
+    private static void changeFragmentWithSharedElement(AppCompatActivity activity, Fragment toFragment, Fragment fromFragment, int containerResID, int transitionNameId, View sharedView) {
+
+        Transition transition = TransitionInflater.from(activity).inflateTransition(R.transition.edit_comment_transition);
+
+        toFragment.setSharedElementEnterTransition(transition);
+        toFragment.setEnterTransition(new Fade());
+        fromFragment.setExitTransition(new Fade());
+        fromFragment.setSharedElementReturnTransition(transition);
+
+        ViewCompat.setTransitionName(sharedView, activity.getResources().getString(transitionNameId));
+
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .addSharedElement(sharedView, activity.getResources().getString(transitionNameId))
+                .replace(R.id.fragment_container, toFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     public static Fragment getCurrentFragment(AppCompatActivity activity) {
@@ -77,6 +103,10 @@ public class TruthFragmentManager {
         if (!(getCurrentFragment(activity) instanceof SearchResultFragment)) {
             changeFragment(activity, SearchResultFragment.newInstance(key), R.id.fragment_container, true, null);
         }
+    }
+
+    public static void displayEditComment(AppCompatActivity activity, Fragment fromFragment, int transitionNameId, View sharedView, Verse verse) {
+        changeFragmentWithSharedElement(activity, EditCommentFragment.newInstance(verse), fromFragment, R.id.fragment_container, transitionNameId, sharedView);
     }
 
     /*public static void displaySearchResult(AppCompatActivity activity, String key) {

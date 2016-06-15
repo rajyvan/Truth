@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent" android:layout_height="match_parent"
+              android:background="@color/very_light_gray"
+              android:orientation="vertical">
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@color/white"
+                  android:orientation="vertical"
+                  android:paddingBottom="32dp"
+                  android:paddingLeft="16dp"
+                  android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/tv_ref"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="@color/green"
+            android:textSize="22sp"
+            tools:text="La référence ici"/>
+
+        <TextView
+            android:id="@+id/tv_verse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nibh enim. Vestibulum volutpat elit sed mattis efficitur. Donec imperdiet quam dolor, et aliquam felis fringilla a. Donec imperdiet neque non nulla gravida tristique. Maecenas malesuada erat vel gravida efficitur. Pellentesque sit amet sollicitudin ipsum. Vestibulum bibendum purus et purus aliquet, in pulvinar enim vestibulum. Pellentesque eu lacus a quam imperdiet pretium in eget tortor. Proin quis massa vehicula, gravida purus et, hendrerit dolor. Quisque justo magna, consequat eget scelerisque et, semper fermentum magna. Donec rhoncus, mauris et rutrum vulputate, orci nunc viverra metus, sed rutrum arcu ipsum a ante"/>
+
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"/>
+
+</LinearLayout>

@@ -29,13 +29,11 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 import org.json.JSONException;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -111,7 +109,7 @@ public class MainActivity extends BaseActivity
     private void configureBackStackListener() {
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
             final BaseFragment fragment = (BaseFragment) TruthFragmentManager.getCurrentFragment(MainActivity.this);
-            if (fragment != null) {
+            if (fragment != null && fragment.getTitle() > 0) {
                 setTitle(fragment.getTitle());
             }
         });
@@ -137,7 +135,7 @@ public class MainActivity extends BaseActivity
             ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
                 @Override
                 public void done(ParseUser user, ParseException e) {
-                    if (e == null && user!=null) {
+                    if (e == null && user != null) {
                         GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), (object, response) -> {
                             try {
                                 String mail = object.getString("email");

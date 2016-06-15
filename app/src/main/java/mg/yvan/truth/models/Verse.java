@@ -6,7 +6,9 @@ import android.database.Cursor;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import mg.yvan.truth.TruthApplication;
 import mg.yvan.truth.models.database.DataBook;
+import mg.yvan.truth.models.database.DataVerse;
 
 /**
  * Created by Yvan on 13/06/16.
@@ -26,6 +28,21 @@ public class Verse extends RealmObject {
     private String text;
     private String book;
     private Date dateAdded;
+
+    public static Verse from(DataVerse dataVerse) {
+        final Verse verse = new Verse();
+        String selection = DataBook.BOOK_REF_ID + "=" + dataVerse.getBookId();
+        Cursor cursor = TruthApplication.getAppContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            DataBook book = new DataBook().fromCursor(cursor);
+            verse.setBook(book.getName());
+            verse.setText(dataVerse.getText());
+            verse.setVerse(dataVerse.getVerse());
+            verse.setChapter(dataVerse.getChapter());
+            verse.setBookId((int) dataVerse.getBookId());
+        }
+        return verse;
+    }
 
     public String getObjectId() {
         return objectId;
