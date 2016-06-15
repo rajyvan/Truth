@@ -94,4 +94,8 @@ public class BibleItemFragment extends BaseFragment implements LoaderManager.Loa
 
     }
 
+    @Override
+    public boolean showBackButton() {
+        return false;
+    }
 }

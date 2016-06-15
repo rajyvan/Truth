@@ -3,13 +3,13 @@ package mg.yvan.truth.ui.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -42,9 +42,9 @@ import mg.yvan.truth.event.OnSearchQueryChange;
 import mg.yvan.truth.manager.SessionManager;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.models.database.RealmHelper;
-import mg.yvan.truth.ui.dialog.SelectBookDialog;
 import mg.yvan.truth.ui.fragment.BaseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
+import mg.yvan.truth.ui.view.CustomActionBarDrawerToggle;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,6 +55,8 @@ public class MainActivity extends BaseActivity
     NavigationView mNavView;
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+
+    private CustomActionBarDrawerToggle mToggle;
 
     private ImageView mIvProfilePhoto;
     private TextView mTvProfileName;
@@ -73,15 +75,13 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        configureToolbar();
 
         final View headerView = mNavView.getHeaderView(0);
         mIvProfilePhoto = (ImageView) headerView.findViewById(R.id.iv_photo);
         mTvProfileName = (TextView) headerView.findViewById(R.id.tv_name);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.setDrawerListener(toggle);
-        toggle.syncState();
 
         mNavView.setNavigationItemSelectedListener(this);
 
@@ -106,11 +106,40 @@ public class MainActivity extends BaseActivity
         configureBackStackListener();
     }
 
+    private void configureToolbar() {
+        mToggle = new CustomActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mToggle.syncState();
+
+        mDrawerLayout.addDrawerListener(mToggle);
+        mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+
+        /*mToolbar.post(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < mToolbar.getChildCount(); i++) {
+                    // make toggle drawable center-vertical
+                    if (mToolbar.getChildAt(i) instanceof ImageButton) {
+                        Toolbar.LayoutParams lp = (Toolbar.LayoutParams) mToolbar.getChildAt(i).getLayoutParams();
+                        lp.gravity = Gravity.CENTER_VERTICAL;
+                    }
+                }
+            }
+        });*/
+    }
+
     private void configureBackStackListener() {
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
             final BaseFragment fragment = (BaseFragment) TruthFragmentManager.getCurrentFragment(MainActivity.this);
-            if (fragment != null && fragment.getTitle() > 0) {
-                setTitle(fragment.getTitle());
+            if (fragment != null) {
+                if (fragment.getTitle() > 0) {
+                    setTitle(fragment.getTitle());
+                }
+
+                if (fragment.showBackButton()) {
+                    mToggle.animateToBackArrow();
+                } else {
+                    mToggle.animateToMenu();
+                }
             }
         });
     }
@@ -185,7 +214,6 @@ public class MainActivity extends BaseActivity
         if (profile != null && user != null) {
             user.setUsername(profile.getName());
             user.put("photo", profile.getProfilePictureUri(photoSize, photoSize).toString());
-            //user.setEmail(profile.get);
             user.saveEventually();
         }
     }
@@ -215,10 +243,6 @@ public class MainActivity extends BaseActivity
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            Fragment dialogFragment = getSupportFragmentManager().findFragmentByTag(SelectBookDialog.TAG);
-            if (dialogFragment != null) {
-
-            }
             super.onBackPressed();
         }
     }
@@ -255,6 +279,22 @@ public class MainActivity extends BaseActivity
         });
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+            } else {
+                onBackPressed();
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

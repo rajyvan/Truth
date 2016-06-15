@@ -87,4 +87,9 @@ public class MyVerseFragment extends BaseFragment {
         return R.string.menu_my_verse;
     }
 
+    @Override
+    public boolean showBackButton() {
+        return false;
+    }
+
 }

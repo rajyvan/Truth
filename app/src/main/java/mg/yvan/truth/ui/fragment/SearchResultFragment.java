@@ -95,4 +95,9 @@ public class SearchResultFragment extends BaseFragment implements LoaderManager.
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    @Override
+    public boolean showBackButton() {
+        return true;
+    }
 }

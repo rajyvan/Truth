@@ -10,6 +10,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import mg.yvan.truth.R;
 import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.ui.activity.MainActivity;
 
 /**
  * Created by Yvan on 15/06/16.
@@ -53,6 +54,11 @@ public class EditCommentFragment extends BaseFragment {
     @Override
     public int getTitle() {
         return 0;
+    }
+
+    @Override
+    public boolean showBackButton() {
+        return true;
     }
 
 }

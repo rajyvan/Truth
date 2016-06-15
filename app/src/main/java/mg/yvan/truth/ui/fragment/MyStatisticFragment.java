@@ -16,4 +16,9 @@ public class MyStatisticFragment extends BaseFragment {
     public int getTitle() {
         return R.string.menu_my_statistics;
     }
+
+    @Override
+    public boolean showBackButton() {
+        return false;
+    }
 }

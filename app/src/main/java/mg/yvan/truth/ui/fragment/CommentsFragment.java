@@ -16,4 +16,9 @@ public class CommentsFragment extends BaseFragment {
     public int getTitle() {
         return R.string.menu_comments;
     }
+
+    @Override
+    public boolean showBackButton() {
+        return false;
+    }
 }

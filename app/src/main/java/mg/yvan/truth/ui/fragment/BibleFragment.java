@@ -159,4 +159,8 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
         TruthFragmentManager.displayEditComment((AppCompatActivity) getActivity(), this, R.string.transition_verse, event.getSharedView(), event.getVerse());
     }
 
+    @Override
+    public boolean showBackButton() {
+        return false;
+    }
 }

@@ -22,6 +22,8 @@ public abstract class BaseFragment extends Fragment {
         getActivity().setTitle(title);
     }
 
+    public abstract boolean showBackButton();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -38,5 +40,6 @@ public abstract class BaseFragment extends Fragment {
         ButterKnife.unbind(this);
         super.onDestroy();
     }
+
 }
 
