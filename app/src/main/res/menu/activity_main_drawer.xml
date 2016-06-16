@@ -16,9 +16,9 @@
             android:icon="@drawable/ic_menu_comment"
             android:title="@string/menu_my_comments"/>
         <item
-            android:id="@+id/nav_statistics"
-            android:icon="@drawable/ic_menu_statistic"
-            android:title="@string/menu_my_statistics"/>
+            android:id="@+id/nav_community"
+            android:icon="@drawable/ic_menu_community"
+            android:title="@string/menu_community"/>
     </group>
 
     <item android:id="@+id/identity"

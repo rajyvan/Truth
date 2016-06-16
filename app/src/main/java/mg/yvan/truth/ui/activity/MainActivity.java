@@ -309,7 +309,7 @@ public class MainActivity extends BaseActivity
             TruthFragmentManager.displayMyVerse(this);
         } else if (id == R.id.nav_comment) {
             TruthFragmentManager.displayComments(this);
-        } else if (id == R.id.nav_statistics) {
+        } else if (id == R.id.nav_community) {
             TruthFragmentManager.displayMyStatitistic(this);
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);

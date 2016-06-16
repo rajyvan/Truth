@@ -15,7 +15,7 @@ import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.ui.fragment.BibleFragment;
 import mg.yvan.truth.ui.fragment.MyCommentsFragment;
 import mg.yvan.truth.ui.fragment.EditCommentFragment;
-import mg.yvan.truth.ui.fragment.MyStatisticFragment;
+import mg.yvan.truth.ui.fragment.CommunityFragment;
 import mg.yvan.truth.ui.fragment.MyVerseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
 
@@ -96,7 +96,7 @@ public class TruthFragmentManager {
 
     public static void displayMyStatitistic(AppCompatActivity activity) {
         clearBackStack(activity);
-        changeFragment(activity, new MyStatisticFragment(), R.id.fragment_container, false, null);
+        changeFragment(activity, new CommunityFragment(), R.id.fragment_container, false, null);
     }
 
     public static void displaySearchResult(AppCompatActivity activity, String key) {

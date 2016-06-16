@@ -10,7 +10,7 @@
     <string name="menu_bible">Bible</string>
     <string name="menu_my_verse">Mes versets</string>
     <string name="menu_my_comments">Mes commentaires</string>
-    <string name="menu_my_statistics">Mes statistiques</string>
+    <string name="menu_community">Communauté</string>
     <string name="logout">Se déconnecter</string>
     <string name="indentity">Identité</string>
     <string name="login">Se connecter</string>
