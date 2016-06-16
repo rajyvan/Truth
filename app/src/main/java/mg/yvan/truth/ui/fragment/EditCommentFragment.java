@@ -2,15 +2,20 @@ package mg.yvan.truth.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import butterknife.Bind;
+import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnNewCommentEvent;
 import mg.yvan.truth.models.Verse;
-import mg.yvan.truth.ui.activity.MainActivity;
+import mg.yvan.truth.ui.dialog.NewCommentDialog;
 
 /**
  * Created by Yvan on 15/06/16.
@@ -23,6 +28,8 @@ public class EditCommentFragment extends BaseFragment {
     TextView mTvVerse;
     @Bind(R.id.recycler)
     RecyclerView mRecycler;
+    @Bind(R.id.fab)
+    FloatingActionButton mFab;
 
     private Verse mVerse;
 
@@ -44,6 +51,13 @@ public class EditCommentFragment extends BaseFragment {
         ViewCompat.setTransitionName(mTvVerse, getResources().getString(R.string.transition_verse));
         mTvVerse.setText(mVerse.getText());
         mTvRef.setText(mVerse.formatReference(getActivity()));
+
+        mFab.setOnClickListener(v -> {
+            NewCommentDialog.show((AppCompatActivity) getActivity(), mVerse);
+        });
+
+        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+
     }
 
     @Override
@@ -61,4 +75,19 @@ public class EditCommentFragment extends BaseFragment {
         return true;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    public void onEventMainThread(OnNewCommentEvent event) {
+
+    }
 }

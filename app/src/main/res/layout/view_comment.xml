@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/box_edittext"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/view_comment_public_padding_top">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:text="@string/new_comment"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/dark_green"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:text="@string/new_comment"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/gray"
+            android:textSize="9sp"
+            tools:text="Genèse 1, verset 1 à "/>
+
+        <TextView
+            android:id="@+id/tv_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nibh enim. Vestibulum volutpat elit sed mattis efficitur. Donec imperdiet quam dolor, et aliquam felis fringilla a. Donec imperdiet neque non nulla gravida tristique. Maecenas malesuada erat vel gravida efficitur. Pellentesque sit amet sollicitudin ipsum. Vestibulum bibendum purus et purus aliquet, in pulvinar enim vestibulum. Pellentesque eu lacus a quam imperdiet pretium in eget tortor. Proin quis massa vehicula, gravida purus et, hendrerit dolor. Quisque justo magna, consequat eget scelerisque et, semper fermentum magna. Donec rhoncus, mauris et rutrum vulputate, orci nunc viverra metus, sed rutrum arcu ipsum a ante"/>
+
+        <View android:id="@+id/line"
+              android:layout_width="match_parent"
+              android:layout_height="1px"
+              android:layout_marginBottom="8dp"
+              android:layout_marginTop="8dp"
+              android:background="@color/light_gray"/>
+
+        <ImageButton
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@null"
+            android:src="@drawable/delete"/>
+
+    </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_photo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/book_placeholder"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="3dp"
+        app:civ_fill_color="@color/green"/>
+</RelativeLayout>

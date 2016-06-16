@@ -9,7 +9,7 @@
     <!-- menu -->
     <string name="menu_bible">Bible</string>
     <string name="menu_my_verse">Mes versets</string>
-    <string name="menu_comments">Commentaires</string>
+    <string name="menu_my_comments">Mes commentaires</string>
     <string name="menu_my_statistics">Mes statistiques</string>
     <string name="logout">Se déconnecter</string>
     <string name="indentity">Identité</string>
@@ -25,6 +25,12 @@
     <string name="anonyme">Anonyme</string>
     <string name="search_result">Résultats de recherche</string>
     <string name="no_favorite_verse">Aucun verset mis en favori</string>
+    <string name="no_comment_yet">Pas de commentaire encore</string>
+    <string name="new_comment">Nouveau commentaire</string>
+    <string name="new_comment_hint">Entrer ici votre commentaire</string>
+    <string name="send">Envoyer</string>
+    <string name="new_comment_ref" formatted="false">%s %d, verset %d à</string>
+    <string name="comment_ref" formatted="false">%s %d : %d - %d</string>
 
     <plurals name="nb_results">
         <item quantity="zero">%d résultat</item>
