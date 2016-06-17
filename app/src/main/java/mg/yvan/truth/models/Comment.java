@@ -11,15 +11,19 @@ public class Comment extends RealmObject {
 
     public final static String DATE_ADDED = "addedDate";
 
+    private Reference mReference;
     private String text;
     private Date addedDate;
-    private int bookId;
-    private String bookName;
-    private int chapter;
-    private int startVerse;
-    private int endVerse;
     private String author;
     private String authorUrl;
+
+    public Reference getReference() {
+        return mReference;
+    }
+
+    public void setReference(Reference reference) {
+        mReference = reference;
+    }
 
     public String getText() {
         return text;
@@ -35,46 +39,6 @@ public class Comment extends RealmObject {
 
     public void setAddedDate(Date addedDate) {
         this.addedDate = addedDate;
-    }
-
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
-    }
-
-    public String getBookName() {
-        return bookName;
-    }
-
-    public void setBookName(String bookName) {
-        this.bookName = bookName;
-    }
-
-    public int getChapter() {
-        return chapter;
-    }
-
-    public void setChapter(int chapter) {
-        this.chapter = chapter;
-    }
-
-    public int getStartVerse() {
-        return startVerse;
-    }
-
-    public void setStartVerse(int startVerse) {
-        this.startVerse = startVerse;
-    }
-
-    public int getEndVerse() {
-        return endVerse;
-    }
-
-    public void setEndVerse(int endVerse) {
-        this.endVerse = endVerse;
     }
 
     public String getAuthor() {

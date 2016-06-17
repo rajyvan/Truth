@@ -2,6 +2,7 @@ package mg.yvan.truth.ui.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -19,9 +20,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
-import mg.yvan.truth.event.OnEditVerseEvent;
 import mg.yvan.truth.event.OnFavoriteRemovedEvent;
+import mg.yvan.truth.event.OnReferenceDetailEvent;
+import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.database.DataBook;
 import mg.yvan.truth.models.database.DataVerse;
 
 /**
@@ -110,7 +113,18 @@ public class VerseView extends CardView {
 
         mBtnComment.setOnClickListener(v -> {
             final Verse localVerse = Verse.from(verse);
-            EventBus.getDefault().post(new OnEditVerseEvent(this, localVerse));
+            final Reference reference = new Reference();
+            reference.setBookId(localVerse.getBookId());
+            reference.setChapter(localVerse.getChapter());
+            reference.setStartVerse(localVerse.getVerse());
+            reference.setEndVerse(localVerse.getVerse());
+            String selection = DataBook.BOOK_REF_ID + "=" + localVerse.getBookId();
+            Cursor cursor = getContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final DataBook book = new DataBook().fromCursor(cursor);
+                reference.setBookName(book.getName());
+            }
+            EventBus.getDefault().post(new OnReferenceDetailEvent(reference, this));
         });
     }
 
@@ -149,6 +163,21 @@ public class VerseView extends CardView {
                     .build();
             ShareDialog shareDialog = new ShareDialog((Activity) getContext());
             shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+        });
+
+        mBtnComment.setOnClickListener(v -> {
+            final Reference reference = new Reference();
+            reference.setBookId(verse.getBookId());
+            reference.setChapter(verse.getChapter());
+            reference.setStartVerse(verse.getVerse());
+            reference.setEndVerse(verse.getVerse());
+            String selection = DataBook.BOOK_REF_ID + "=" + verse.getBookId();
+            Cursor cursor = getContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final DataBook book = new DataBook().fromCursor(cursor);
+                reference.setBookName(book.getName());
+            }
+            EventBus.getDefault().post(new OnReferenceDetailEvent(reference, this));
         });
     }
 

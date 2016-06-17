@@ -17,7 +17,7 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnBookChangeEvent;
-import mg.yvan.truth.event.OnEditVerseEvent;
+import mg.yvan.truth.event.OnReferenceDetailEvent;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.models.database.DataBook;
 import mg.yvan.truth.models.database.DataVerse;
@@ -155,8 +155,8 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
         getLoaderManager().restartLoader(LOADER_ID, bundle, this);
     }
 
-    public void onEventMainThread(OnEditVerseEvent event) {
-        TruthFragmentManager.displayEditComment((AppCompatActivity) getActivity(), this, R.string.transition_verse, event.getSharedView(), event.getVerse());
+    public void onEventMainThread(OnReferenceDetailEvent event) {
+        TruthFragmentManager.displayEditComment((AppCompatActivity) getActivity(), this, R.string.transition_verse, event.getSharedView(), event.getReference());
     }
 
     @Override

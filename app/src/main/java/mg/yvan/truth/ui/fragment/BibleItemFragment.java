@@ -75,7 +75,6 @@ public class BibleItemFragment extends BaseFragment implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if (cursorLoader.getId() == BIBLE_LOADER_ID) {
             if (cursor != null) {
-
                 mRecylerView.setAdapter(new VerseAdapter(getActivity(), cursor));
                 if (chapterId == defaultChapter && defaultVerse > 0) {
                     mRecylerView.postDelayed(() -> mRecylerView.smoothScrollToPosition(defaultVerse), SCROLL_DELAY);

@@ -7,21 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import mg.yvan.truth.models.Comment;
+import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.RealmHelper;
 import mg.yvan.truth.ui.view.ReferenceView;
 
 /**
  * Created by Yvan on 14/06/16.
  */
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+public class MyCommentAdapter extends RecyclerView.Adapter<MyCommentAdapter.CommentViewHolder> {
 
-    private List<Comment> mComments;
-    private boolean mIsPublic;
+    private List<Reference> mReferences;
 
-    public CommentAdapter(List<Comment> Comments, boolean isPublic) {
-        mComments = new ArrayList<>(Comments);
-        mIsPublic = isPublic;
+    public MyCommentAdapter(List<Reference> references) {
+        mReferences = new ArrayList<>(references);
     }
 
     @Override
@@ -31,19 +29,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
-        //holder.mCommentView.populate(mComments.get(position));
+        holder.mCommentView.populate(mReferences.get(position), false);
     }
 
     @Override
     public int getItemCount() {
-        return mComments == null ? 0 : mComments.size();
+        return mReferences == null ? 0 : mReferences.size();
     }
 
-    public void remove(Comment Comment) {
-        int position = mComments.indexOf(Comment);
+    public void remove(Reference reference) {
+        int position = mReferences.indexOf(reference);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
-        realm.executeTransaction(realm1 -> mComments.get(position).deleteFromRealm());
-        mComments.remove(position);
+        realm.executeTransaction(realm1 -> {
+            mReferences.get(position).getComments().deleteAllFromRealm();
+            mReferences.get(position).deleteFromRealm();
+        });
+        mReferences.remove(position);
         notifyItemRemoved(position);
     }
 

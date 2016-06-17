@@ -43,4 +43,16 @@
         <item quantity="one">%d verset</item>
         <item quantity="other">%d versets</item>
     </plurals>
+
+    <plurals name="nb_references">
+        <item quantity="zero">%d référence</item>
+        <item quantity="one">%d référence</item>
+        <item quantity="other">%d références</item>
+    </plurals>
+
+    <plurals name="nb_more_comments">
+        <item quantity="zero">%d commentaire en plus</item>
+        <item quantity="one">%d commentaire en plus</item>
+        <item quantity="other">%d commentaires en plus</item>
+    </plurals>
 </resources>

@@ -12,19 +12,24 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import mg.yvan.truth.R;
-import mg.yvan.truth.event.OnCommentDeletedEvent;
+import mg.yvan.truth.event.OnReferenceDeletedEvent;
+import mg.yvan.truth.event.OnReferenceDetailEvent;
 import mg.yvan.truth.models.Comment;
+import mg.yvan.truth.models.Reference;
 
 /**
  * Created by Yvan on 31/05/16.
  */
-public class CommentView extends CardView {
+public class ReferenceView extends CardView {
 
     private final static String DATE_FORMAT = "dd MMM yyyy, kk'h'mm";
     private static SimpleDateFormat mDateFormat;
@@ -40,22 +45,24 @@ public class CommentView extends CardView {
     CircleImageView mIvPhoto;
     @Bind(R.id.container)
     LinearLayout mContainer;
+    @Bind(R.id.tv_more_comment)
+    TextView mTvMoreComment;
 
-    public CommentView(Context context) {
+    public ReferenceView(Context context) {
         this(context, null);
     }
 
-    public CommentView(Context context, AttributeSet attrs) {
+    public ReferenceView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CommentView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ReferenceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
     }
 
     private void initView() {
-        inflate(getContext(), R.layout.view_comment, this);
+        inflate(getContext(), R.layout.view_reference, this);
         ButterKnife.bind(this);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
@@ -74,23 +81,37 @@ public class CommentView extends CardView {
         }
     }
 
-    public void populate(Comment comment, boolean isPublic) {
+    public void populate(Reference reference, boolean isCommunity) {
+        List<Comment> comments = new ArrayList<>(reference.getComments());
+        Collections.sort(comments, (lhs, rhs) -> rhs.getAddedDate().compareTo(lhs.getAddedDate()));
+        final Comment comment = comments.get(0);
         mTvDate.setText(mDateFormat.format(comment.getAddedDate()));
         mTvComment.setText(comment.getText());
-        mBtnDelete.setOnClickListener(v -> {
-            EventBus.getDefault().post(new OnCommentDeletedEvent(comment));
-        });
 
-        int paddingTop = getResources().getDimensionPixelSize(isPublic ? R.dimen.view_comment_public_padding_top : R.dimen.view_comment_normal_padding_top);
+        int paddingTop = getResources().getDimensionPixelSize(isCommunity ? R.dimen.view_comment_public_padding_top : R.dimen.view_comment_normal_padding_top);
         mContainer.setPadding(0, paddingTop, 0, 0);
 
-        if (isPublic) {
+        if (isCommunity) {
             mTvName.setText(comment.getAuthor());
             mIvPhoto.setVisibility(VISIBLE);
             Glide.with(getContext()).load(comment.getAuthorUrl()).placeholder(R.mipmap.ic_launcher).into(mIvPhoto);
         } else {
-            mTvName.setText(String.format(getContext().getString(R.string.comment_ref), comment.getBookName(), comment.getChapter(), comment.getStartVerse(), comment.getStartVerse()));
+            mTvName.setText(String.format(getContext().getString(R.string.comment_ref), reference.getBookName(), reference.getChapter(), reference.getStartVerse(), reference.getStartVerse()));
             mIvPhoto.setVisibility(GONE);
+        }
+
+        if (comments.size() > 1) {
+            mTvMoreComment.setText(getResources().getQuantityString(R.plurals.nb_more_comments, comments.size(), comments.size()));
+            mBtnDelete.setImageResource(R.drawable.more);
+            mBtnDelete.setOnClickListener(v -> {
+                EventBus.getDefault().post(new OnReferenceDetailEvent(reference, this));
+            });
+        } else {
+            mTvMoreComment.setText(null);
+            mBtnDelete.setImageResource(R.drawable.delete);
+            mBtnDelete.setOnClickListener(v -> {
+                EventBus.getDefault().post(new OnReferenceDeletedEvent(reference));
+            });
         }
     }
 

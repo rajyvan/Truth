@@ -37,7 +37,7 @@ import io.realm.Realm;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnNewCommentEvent;
 import mg.yvan.truth.models.Comment;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.models.database.RealmHelper;
 
@@ -60,21 +60,21 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
     @Bind(R.id.btn_send)
     Button mBtnSend;
 
-    private Verse mVerse;
+    private Reference mReference;
 
-    public static void show(AppCompatActivity activity, Verse verse) {
-        NewCommentDialog dialog = NewCommentDialog.newInstance(verse);
+    public static void show(AppCompatActivity activity, Reference reference) {
+        NewCommentDialog dialog = NewCommentDialog.newInstance(reference);
         dialog.show(activity.getSupportFragmentManager(), TAG);
     }
 
-    public static NewCommentDialog newInstance(Verse verse) {
+    public static NewCommentDialog newInstance(Reference reference) {
         NewCommentDialog fragment = new NewCommentDialog();
-        fragment.setVerse(verse);
+        fragment.setReference(reference);
         return fragment;
     }
 
-    public void setVerse(Verse verse) {
-        mVerse = verse;
+    public void setReference(Reference reference) {
+        mReference = reference;
     }
 
     @Nullable
@@ -106,7 +106,7 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEtComment.setCursorVisible(true);
-        mTvRef.setText(String.format(getString(R.string.new_comment_ref), mVerse.getBook(), mVerse.getChapter(), mVerse.getVerse()));
+        mTvRef.setText(String.format(getString(R.string.new_comment_ref), mReference.getBookName(), mReference.getChapter(), mReference.getStartVerse()));
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
         mBtnSend.setOnClickListener(v -> {
@@ -116,18 +116,39 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
 
                 Realm realm = RealmHelper.getInstance().getRealmForMainThread();
                 realm.beginTransaction();
+
+                Reference reference = realm.where(Reference.class)
+                        .equalTo(Reference.BOOK_ID, mReference.getBookId())
+                        .equalTo(Reference.CHAPTER, mReference.getChapter())
+                        .equalTo(Reference.START_VERSE, mReference.getStartVerse())
+                        .equalTo(Reference.END_VERSE, mEndVerse.getSelectedItemPosition() + 1)
+                        .findFirst();
+
+                if (reference == null) {
+                    reference = realm.createObject(Reference.class);
+                    reference.setBookId(mReference.getBookId());
+                    reference.setChapter(mReference.getChapter());
+                    reference.setStartVerse(mReference.getStartVerse());
+                    reference.setEndVerse(mEndVerse.getSelectedItemPosition() + 1);
+                    reference.setBookName(mReference.getBookName());
+                }
+                reference.setUpdateDate(new Date());
+
+                List<Comment> comments = reference.getComments();
+                if (comments == null) {
+                    comments = new ArrayList<>();
+                }
+
+
                 final Comment comment = realm.createObject(Comment.class);
                 comment.setText(text);
                 comment.setAddedDate(new Date());
-                comment.setBookId(mVerse.getBookId());
-                comment.setBookName(mVerse.getBook());
-                comment.setChapter(mVerse.getChapter());
-                comment.setStartVerse(mVerse.getVerse());
-                comment.setEndVerse(mEndVerse.getSelectedItemPosition() + 1);
+                comment.setReference(reference);
                 if (user != null && ParseFacebookUtils.isLinked(user)) {
                     comment.setAuthor(user.getUsername());
                     comment.setAuthorUrl(user.getString("photo"));
                 }
+                comments.add(comment);
                 realm.commitTransaction();
                 EventBus.getDefault().post(new OnNewCommentEvent(comment));
             }
@@ -143,7 +164,7 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        String[] args = new String[]{String.valueOf(mVerse.getBookId()), String.valueOf(mVerse.getChapter())};
+        String[] args = new String[]{String.valueOf(mReference.getBookId()), String.valueOf(mReference.getChapter())};
         return new CursorLoader(getActivity(), DataVerse.CONTENT_URI, DataVerse.PROJECTION_ALL, DataVerse.BOOK_ID + " = ? AND " + DataVerse.CHAPTER + " = ?", args, null);
     }
 
@@ -158,7 +179,7 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, verses);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mEndVerse.setAdapter(dataAdapter);
-            mEndVerse.setSelection(mVerse.getVerse() - 1);
+            mEndVerse.setSelection(mReference.getEndVerse() - 1);
         }
     }
 

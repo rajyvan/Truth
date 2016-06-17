@@ -11,6 +11,7 @@ import android.transition.TransitionInflater;
 import android.view.View;
 
 import mg.yvan.truth.R;
+import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.ui.fragment.BibleFragment;
 import mg.yvan.truth.ui.fragment.MyCommentsFragment;
@@ -105,8 +106,8 @@ public class TruthFragmentManager {
         }
     }
 
-    public static void displayEditComment(AppCompatActivity activity, Fragment fromFragment, int transitionNameId, View sharedView, Verse verse) {
-        changeFragmentWithSharedElement(activity, EditCommentFragment.newInstance(verse), fromFragment, R.id.fragment_container, transitionNameId, sharedView);
+    public static void displayEditComment(AppCompatActivity activity, Fragment fromFragment, int transitionNameId, View sharedView, Reference reference) {
+        changeFragmentWithSharedElement(activity, EditCommentFragment.newInstance(reference), fromFragment, R.id.fragment_container, transitionNameId, sharedView);
     }
 
     /*public static void displaySearchResult(AppCompatActivity activity, String key) {

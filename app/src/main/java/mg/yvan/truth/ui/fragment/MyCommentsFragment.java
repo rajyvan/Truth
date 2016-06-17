@@ -2,6 +2,7 @@ package mg.yvan.truth.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,10 +14,12 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import io.realm.Sort;
 import mg.yvan.truth.R;
-import mg.yvan.truth.event.OnCommentDeletedEvent;
-import mg.yvan.truth.models.Comment;
+import mg.yvan.truth.event.OnReferenceDeletedEvent;
+import mg.yvan.truth.event.OnReferenceDetailEvent;
+import mg.yvan.truth.manager.TruthFragmentManager;
+import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.RealmHelper;
-import mg.yvan.truth.ui.adapter.CommentAdapter;
+import mg.yvan.truth.ui.adapter.MyCommentAdapter;
 
 /**
  * Created by Yvan on 10/06/16.
@@ -30,22 +33,22 @@ public class MyCommentsFragment extends BaseFragment {
     @Bind(R.id.placeholder)
     TextView mPlaceholder;
 
-    private CommentAdapter mCommentAdapter;
+    private MyCommentAdapter mMyCommentAdapter;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        final List<Comment> comments = RealmHelper.getInstance().getRealmForMainThread()
-                .where(Comment.class)
-                .findAllSorted(Comment.DATE_ADDED, Sort.DESCENDING);
+        final List<Reference> references = RealmHelper.getInstance().getRealmForMainThread()
+                .where(Reference.class)
+                .findAllSorted(Reference.UPDATE_DATE, Sort.DESCENDING);
 
-        if (!comments.isEmpty()) {
+        if (!references.isEmpty()) {
             mPlaceholder.setVisibility(View.GONE);
-            mCommentAdapter = new CommentAdapter(comments, false);
-            mRecyclerView.setAdapter(mCommentAdapter);
-            mTvNumber.setText(getResources().getQuantityString(R.plurals.nb_verses, mCommentAdapter.getItemCount(), mCommentAdapter.getItemCount()));
+            mMyCommentAdapter = new MyCommentAdapter(references);
+            mRecyclerView.setAdapter(mMyCommentAdapter);
+            mTvNumber.setText(getResources().getQuantityString(R.plurals.nb_references, mMyCommentAdapter.getItemCount(), mMyCommentAdapter.getItemCount()));
         } else {
             mPlaceholder.setVisibility(View.VISIBLE);
         }
@@ -78,8 +81,16 @@ public class MyCommentsFragment extends BaseFragment {
         super.onStop();
     }
 
-    public void onEventMainThread(OnCommentDeletedEvent event) {
-        mCommentAdapter.remove(event.getComment());
+    public void onEvent(OnReferenceDeletedEvent event) {
+        mMyCommentAdapter.remove(event.getReference());
+    }
+
+    public void onEvent(OnReferenceDetailEvent event) {
+        TruthFragmentManager.displayEditComment((AppCompatActivity) getActivity(),
+                this,
+                R.transition.edit_comment_transition,
+                event.getSharedView(),
+                event.getReference());
     }
 
 }
