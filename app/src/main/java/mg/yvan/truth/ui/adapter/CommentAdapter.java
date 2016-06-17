@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import mg.yvan.truth.models.Comment;
+import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.RealmHelper;
 import mg.yvan.truth.ui.view.CommentView;
 
@@ -43,10 +44,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         return mComments == null ? 0 : mComments.size();
     }
 
-    public void remove(Comment Comment) {
-        int position = mComments.indexOf(Comment);
+    public void remove(Comment comment) {
+        int position = mComments.indexOf(comment);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
-        realm.executeTransaction(realm1 -> mComments.get(position).deleteFromRealm());
+        realm.executeTransaction(realm1 -> {
+            final Reference reference = mComments.get(position).getReference();
+            mComments.get(position).deleteFromRealm();
+            if (reference.getComments().size() == 0) {
+                reference.deleteFromRealm();
+            }
+        });
         mComments.remove(position);
         notifyItemRemoved(position);
     }

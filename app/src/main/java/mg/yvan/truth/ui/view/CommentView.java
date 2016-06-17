@@ -12,7 +12,9 @@ import java.text.SimpleDateFormat;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnCommentDeletedEvent;
 import mg.yvan.truth.models.Comment;
 
 /**
@@ -66,7 +68,7 @@ public class CommentView extends CardView {
         mTvDate.setText(mDateFormat.format(comment.getAddedDate()));
         mTvComment.setText(comment.getText());
         mBtnDelete.setOnClickListener(v -> {
-            // TODO
+            EventBus.getDefault().post(new OnCommentDeletedEvent(comment));
         });
     }
 

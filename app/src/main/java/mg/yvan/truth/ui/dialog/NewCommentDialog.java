@@ -144,6 +144,7 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
                 comment.setText(text);
                 comment.setAddedDate(new Date());
                 comment.setReference(reference);
+                comment.setReference(reference);
                 if (user != null && ParseFacebookUtils.isLinked(user)) {
                     comment.setAuthor(user.getUsername());
                     comment.setAuthorUrl(user.getString("photo"));

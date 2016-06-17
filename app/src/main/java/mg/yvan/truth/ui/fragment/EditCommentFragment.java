@@ -14,14 +14,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.List;
-
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
+import mg.yvan.truth.event.OnCommentDeletedEvent;
 import mg.yvan.truth.event.OnNewCommentEvent;
-import mg.yvan.truth.models.Comment;
 import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.ui.adapter.CommentAdapter;
@@ -103,6 +100,10 @@ public class EditCommentFragment extends BaseFragment implements LoaderManager.L
 
     public void onEventMainThread(OnNewCommentEvent event) {
         mCommentAdapter.addComment(event.getComment());
+    }
+
+    public void onEventMainThread(OnCommentDeletedEvent event) {
+        mCommentAdapter.remove(event.getComment());
     }
 
     @Override

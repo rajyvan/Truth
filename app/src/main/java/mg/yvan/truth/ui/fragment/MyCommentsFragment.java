@@ -39,7 +39,15 @@ public class MyCommentsFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateReferences();
+    }
+
+    private void populateReferences() {
         final List<Reference> references = RealmHelper.getInstance().getRealmForMainThread()
                 .where(Reference.class)
                 .findAllSorted(Reference.UPDATE_DATE, Sort.DESCENDING);
