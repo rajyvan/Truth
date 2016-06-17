@@ -45,6 +45,10 @@ public class VerseView extends CardView {
     ImageButton mBtnComment;
     @Bind(R.id.tv_ref)
     TextView mTvRef;
+    @Bind(R.id.tv_nb_comment)
+    TextView mTvNbComment;
+
+    private Reference mReference;
 
     public VerseView(Context context) {
         this(context, null);
@@ -112,30 +116,37 @@ public class VerseView extends CardView {
             }
         });
 
-        mBtnComment.setOnClickListener(v -> {
-            final Verse localVerse = Verse.from(verse);
-            Reference reference = RealmHelper.getInstance().getRealmForMainThread().where(Reference.class)
-                    .equalTo(Reference.BOOK_ID, localVerse.getBookId())
-                    .equalTo(Reference.CHAPTER, localVerse.getChapter())
-                    .equalTo(Reference.START_VERSE, localVerse.getVerse())
-                    .equalTo(Reference.END_VERSE, localVerse.getVerse())
-                    .findFirst();
+        final Verse localVerse = Verse.from(verse);
+        mReference = RealmHelper.getInstance().getRealmForMainThread().where(Reference.class)
+                .equalTo(Reference.BOOK_ID, localVerse.getBookId())
+                .equalTo(Reference.CHAPTER, localVerse.getChapter())
+                .equalTo(Reference.START_VERSE, localVerse.getVerse())
+                .equalTo(Reference.END_VERSE, localVerse.getVerse())
+                .findFirst();
 
-            if (reference == null) {
-                reference = new Reference();
-                reference.setBookId(localVerse.getBookId());
-                reference.setChapter(localVerse.getChapter());
-                reference.setStartVerse(localVerse.getVerse());
-                reference.setEndVerse(localVerse.getVerse());
-                String selection = DataBook.BOOK_REF_ID + "=" + localVerse.getBookId();
-                Cursor cursor = getContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    final DataBook book = new DataBook().fromCursor(cursor);
-                    reference.setBookName(book.getName());
-                }
+        if (mReference == null) {
+            mReference = new Reference();
+            mReference.setBookId(localVerse.getBookId());
+            mReference.setChapter(localVerse.getChapter());
+            mReference.setStartVerse(localVerse.getVerse());
+            mReference.setEndVerse(localVerse.getVerse());
+            String selection = DataBook.BOOK_REF_ID + "=" + localVerse.getBookId();
+            Cursor cursor = getContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final DataBook book = new DataBook().fromCursor(cursor);
+                mReference.setBookName(book.getName());
             }
-            EventBus.getDefault().post(new OnReferenceDetailEvent(reference, this));
+        }
+
+        mBtnComment.setOnClickListener(v -> {
+            EventBus.getDefault().post(new OnReferenceDetailEvent(mReference, this));
         });
+
+        mTvNbComment.setText("");
+        if (mReference.getComments() != null) {
+            int nbComment = mReference.getComments().size();
+            mTvNbComment.setText(nbComment > 0 ? String.valueOf(nbComment) : "");
+        }
     }
 
     private SpannableString highLight(Context context, String text, String normalizedText, String searchKey) {
@@ -175,20 +186,36 @@ public class VerseView extends CardView {
             shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
         });
 
-        mBtnComment.setOnClickListener(v -> {
-            final Reference reference = new Reference();
-            reference.setBookId(verse.getBookId());
-            reference.setChapter(verse.getChapter());
-            reference.setStartVerse(verse.getVerse());
-            reference.setEndVerse(verse.getVerse());
+        mReference = RealmHelper.getInstance().getRealmForMainThread().where(Reference.class)
+                .equalTo(Reference.BOOK_ID, verse.getBookId())
+                .equalTo(Reference.CHAPTER, verse.getChapter())
+                .equalTo(Reference.START_VERSE, verse.getVerse())
+                .equalTo(Reference.END_VERSE, verse.getVerse())
+                .findFirst();
+
+        if (mReference == null) {
+            mReference = new Reference();
+            mReference.setBookId(verse.getBookId());
+            mReference.setChapter(verse.getChapter());
+            mReference.setStartVerse(verse.getVerse());
+            mReference.setEndVerse(verse.getVerse());
             String selection = DataBook.BOOK_REF_ID + "=" + verse.getBookId();
             Cursor cursor = getContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 final DataBook book = new DataBook().fromCursor(cursor);
-                reference.setBookName(book.getName());
+                mReference.setBookName(book.getName());
             }
-            EventBus.getDefault().post(new OnReferenceDetailEvent(reference, this));
+        }
+
+        mBtnComment.setOnClickListener(v -> {
+            EventBus.getDefault().post(new OnReferenceDetailEvent(mReference, this));
         });
+
+        mTvNbComment.setText("");
+        if (mReference.getComments() != null) {
+            int nbComment = mReference.getComments().size();
+            mTvNbComment.setText(nbComment > 0 ? String.valueOf(nbComment) : "");
+        }
     }
 
 }

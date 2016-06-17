@@ -63,11 +63,25 @@
         android:src="@drawable/comment"/>
 
     <TextView
+        android:id="@+id/tv_nb_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/btn_comment"
+        android:layout_alignTop="@id/btn_comment"
+        android:layout_below="@id/line"
+        android:layout_marginRight="4dp"
+        android:layout_toLeftOf="@id/btn_comment"
+        android:gravity="center"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        tools:text="21"/>
+
+    <TextView
         android:id="@+id/tv_ref"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/line"
-        android:layout_toLeftOf="@id/btn_comment"
+        android:layout_toLeftOf="@id/tv_nb_comment"
         android:inputType="text"
         android:textColor="@color/dark_green"
         android:textSize="14sp"
