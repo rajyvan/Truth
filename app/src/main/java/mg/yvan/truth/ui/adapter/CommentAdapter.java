@@ -4,12 +4,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.realm.Realm;
 import mg.yvan.truth.models.Comment;
 import mg.yvan.truth.models.database.RealmHelper;
-import mg.yvan.truth.ui.view.ReferenceView;
+import mg.yvan.truth.ui.view.CommentView;
 
 /**
  * Created by Yvan on 14/06/16.
@@ -17,21 +18,24 @@ import mg.yvan.truth.ui.view.ReferenceView;
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
     private List<Comment> mComments;
-    private boolean mIsPublic;
 
-    public CommentAdapter(List<Comment> Comments, boolean isPublic) {
-        mComments = new ArrayList<>(Comments);
-        mIsPublic = isPublic;
+    public CommentAdapter(List<Comment> comments) {
+        if (comments == null) {
+            mComments = new ArrayList<>();
+        } else {
+            mComments = new ArrayList<>(comments);
+            Collections.sort(mComments, (lhs, rhs) -> rhs.getAddedDate().compareTo(lhs.getAddedDate()));
+        }
     }
 
     @Override
     public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new CommentViewHolder(new ReferenceView(parent.getContext()));
+        return new CommentViewHolder(new CommentView(parent.getContext()));
     }
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
-        //holder.mCommentView.populate(mComments.get(position));
+        holder.mCommentView.populate(mComments.get(position));
     }
 
     @Override
@@ -47,11 +51,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         notifyItemRemoved(position);
     }
 
+    public void addComment(Comment comment) {
+        mComments.add(0, comment);
+        notifyItemInserted(0);
+    }
+
     static class CommentViewHolder extends RecyclerView.ViewHolder {
 
-        ReferenceView mCommentView;
+        CommentView mCommentView;
 
-        public CommentViewHolder(ReferenceView itemView) {
+        public CommentViewHolder(CommentView itemView) {
             super(itemView);
             mCommentView = itemView;
         }

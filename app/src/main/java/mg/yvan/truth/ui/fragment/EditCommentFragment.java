@@ -14,12 +14,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.List;
+
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnNewCommentEvent;
+import mg.yvan.truth.models.Comment;
 import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.DataVerse;
+import mg.yvan.truth.ui.adapter.CommentAdapter;
 import mg.yvan.truth.ui.dialog.NewCommentDialog;
 
 /**
@@ -39,6 +44,7 @@ public class EditCommentFragment extends BaseFragment implements LoaderManager.L
     FloatingActionButton mFab;
 
     private Reference mReference;
+    private CommentAdapter mCommentAdapter;
 
     public static EditCommentFragment newInstance(Reference reference) {
         EditCommentFragment fragment = new EditCommentFragment();
@@ -64,7 +70,8 @@ public class EditCommentFragment extends BaseFragment implements LoaderManager.L
         });
 
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-
+        mCommentAdapter = new CommentAdapter(mReference.getComments());
+        mRecycler.setAdapter(mCommentAdapter);
     }
 
     @Override
@@ -95,7 +102,7 @@ public class EditCommentFragment extends BaseFragment implements LoaderManager.L
     }
 
     public void onEventMainThread(OnNewCommentEvent event) {
-
+        mCommentAdapter.addComment(event.getComment());
     }
 
     @Override

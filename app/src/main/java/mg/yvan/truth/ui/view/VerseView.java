@@ -26,6 +26,7 @@ import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.models.database.DataBook;
 import mg.yvan.truth.models.database.DataVerse;
+import mg.yvan.truth.models.database.RealmHelper;
 
 /**
  * Created by Yvan on 31/05/16.
@@ -113,16 +114,25 @@ public class VerseView extends CardView {
 
         mBtnComment.setOnClickListener(v -> {
             final Verse localVerse = Verse.from(verse);
-            final Reference reference = new Reference();
-            reference.setBookId(localVerse.getBookId());
-            reference.setChapter(localVerse.getChapter());
-            reference.setStartVerse(localVerse.getVerse());
-            reference.setEndVerse(localVerse.getVerse());
-            String selection = DataBook.BOOK_REF_ID + "=" + localVerse.getBookId();
-            Cursor cursor = getContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final DataBook book = new DataBook().fromCursor(cursor);
-                reference.setBookName(book.getName());
+            Reference reference = RealmHelper.getInstance().getRealmForMainThread().where(Reference.class)
+                    .equalTo(Reference.BOOK_ID, localVerse.getBookId())
+                    .equalTo(Reference.CHAPTER, localVerse.getChapter())
+                    .equalTo(Reference.START_VERSE, localVerse.getVerse())
+                    .equalTo(Reference.END_VERSE, localVerse.getVerse())
+                    .findFirst();
+
+            if (reference == null) {
+                reference = new Reference();
+                reference.setBookId(localVerse.getBookId());
+                reference.setChapter(localVerse.getChapter());
+                reference.setStartVerse(localVerse.getVerse());
+                reference.setEndVerse(localVerse.getVerse());
+                String selection = DataBook.BOOK_REF_ID + "=" + localVerse.getBookId();
+                Cursor cursor = getContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    final DataBook book = new DataBook().fromCursor(cursor);
+                    reference.setBookName(book.getName());
+                }
             }
             EventBus.getDefault().post(new OnReferenceDetailEvent(reference, this));
         });

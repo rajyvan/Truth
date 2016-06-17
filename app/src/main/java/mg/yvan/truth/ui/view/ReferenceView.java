@@ -96,7 +96,7 @@ public class ReferenceView extends CardView {
             mIvPhoto.setVisibility(VISIBLE);
             Glide.with(getContext()).load(comment.getAuthorUrl()).placeholder(R.mipmap.ic_launcher).into(mIvPhoto);
         } else {
-            mTvName.setText(String.format(getContext().getString(R.string.comment_ref), reference.getBookName(), reference.getChapter(), reference.getStartVerse(), reference.getStartVerse()));
+            mTvName.setText(String.format(getContext().getString(R.string.comment_ref), reference.getBookName(), reference.getChapter(), reference.getStartVerse(), reference.getEndVerse()));
             mIvPhoto.setVisibility(GONE);
         }
 
@@ -113,6 +113,8 @@ public class ReferenceView extends CardView {
                 EventBus.getDefault().post(new OnReferenceDeletedEvent(reference));
             });
         }
+
+        setOnClickListener(v -> EventBus.getDefault().post(new OnReferenceDetailEvent(reference, ReferenceView.this)));
     }
 
 }

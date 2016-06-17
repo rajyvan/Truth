@@ -19,7 +19,7 @@ import mg.yvan.truth.event.OnReferenceDetailEvent;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.RealmHelper;
-import mg.yvan.truth.ui.adapter.MyCommentAdapter;
+import mg.yvan.truth.ui.adapter.MyReferenceAdapter;
 
 /**
  * Created by Yvan on 10/06/16.
@@ -33,7 +33,7 @@ public class MyCommentsFragment extends BaseFragment {
     @Bind(R.id.placeholder)
     TextView mPlaceholder;
 
-    private MyCommentAdapter mMyCommentAdapter;
+    private MyReferenceAdapter mMyCommentAdapter;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class MyCommentsFragment extends BaseFragment {
 
         if (!references.isEmpty()) {
             mPlaceholder.setVisibility(View.GONE);
-            mMyCommentAdapter = new MyCommentAdapter(references);
+            mMyCommentAdapter = new MyReferenceAdapter(references);
             mRecyclerView.setAdapter(mMyCommentAdapter);
             mTvNumber.setText(getResources().getQuantityString(R.plurals.nb_references, mMyCommentAdapter.getItemCount(), mMyCommentAdapter.getItemCount()));
         } else {

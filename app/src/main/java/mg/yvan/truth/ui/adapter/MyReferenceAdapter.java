@@ -14,11 +14,11 @@ import mg.yvan.truth.ui.view.ReferenceView;
 /**
  * Created by Yvan on 14/06/16.
  */
-public class MyCommentAdapter extends RecyclerView.Adapter<MyCommentAdapter.CommentViewHolder> {
+public class MyReferenceAdapter extends RecyclerView.Adapter<MyReferenceAdapter.CommentViewHolder> {
 
     private List<Reference> mReferences;
 
-    public MyCommentAdapter(List<Reference> references) {
+    public MyReferenceAdapter(List<Reference> references) {
         mReferences = new ArrayList<>(references);
     }
 
