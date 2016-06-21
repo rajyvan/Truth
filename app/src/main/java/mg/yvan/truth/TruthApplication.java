@@ -13,8 +13,9 @@ import java.io.IOException;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import mg.yvan.truth.models.Comment;
-import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.parse.ParseComment;
+import mg.yvan.truth.models.parse.ParseReference;
+import mg.yvan.truth.models.parse.ParseVerse;
 import mg.yvan.truth.provider.BibleDbOpenHelper;
 
 /**
@@ -41,6 +42,10 @@ public class TruthApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ParseObject.registerSubclass(ParseVerse.class);
+        ParseObject.registerSubclass(ParseComment.class);
+        ParseObject.registerSubclass(ParseReference.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(Defines.PARSE_APP_ID)

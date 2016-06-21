@@ -19,6 +19,7 @@ import mg.yvan.truth.event.OnReferenceDetailEvent;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.models.database.RealmHelper;
+import mg.yvan.truth.network.ServiceManager;
 import mg.yvan.truth.ui.adapter.MyVerseAdapter;
 
 /**
@@ -81,6 +82,7 @@ public class MyVerseFragment extends BaseFragment {
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
+        ServiceManager.getInstance().syncFavorite();
         super.onStop();
     }
 

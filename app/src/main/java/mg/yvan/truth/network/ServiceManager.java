@@ -1,26 +1,32 @@
 package mg.yvan.truth.network;
 
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.text.TextUtils;
+
+import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
+
+import java.util.List;
+
+import io.realm.Realm;
+import mg.yvan.truth.TruthApplication;
+import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.parse.ParseVerse;
 
 /**
  * Created by Yvan on 14/06/16.
  */
 public class ServiceManager {
 
-    public final static String BASE_URL = "http://92.222.71.163:3001/truth/";
-
     private static ServiceManager singleInstance;
-    private TruthService mTruthService;
 
     private ServiceManager() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        mTruthService = retrofit.create(TruthService.class);
+
     }
 
     public static ServiceManager getInstance() {
@@ -30,5 +36,71 @@ public class ServiceManager {
         return singleInstance;
     }
 
+    private static boolean isUserLogged() {
+        final ParseUser user = ParseUser.getCurrentUser();
+        return user != null && ParseFacebookUtils.isLinked(user);
+    }
+
+    private static boolean isConnexionAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) TruthApplication.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    private static boolean isSyncAllowed() {
+        return isUserLogged() && isConnexionAvailable();
+    }
+
+    public void syncFavorite() {
+        if (!isSyncAllowed()) return;
+
+        new Thread(() -> {
+
+            ParseUser user = ParseUser.getCurrentUser();
+            final ParseRelation<ParseVerse> relation = user.getRelation("verses");
+
+            // Send all new local verses to server
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            List<Verse> localVerses = realm.where(Verse.class).isNull("parseId").findAll();
+            for (Verse verse : localVerses) {
+                ParseVerse parseVerse = ParseVerse.from(verse);
+                try {
+                    parseVerse.save();
+                } catch (ParseException e) {
+                    continue;
+                }
+                if (!TextUtils.isEmpty(parseVerse.getObjectId())) {
+                    verse.setParseId(parseVerse.getObjectId());
+                    realm.copyToRealmOrUpdate(verse);
+                    relation.add(parseVerse);
+                    user.saveEventually();
+                }
+            }
+
+            // Get all distant verses to replace local
+            ParseQuery<ParseVerse> query = relation.getQuery();
+            try {
+                List<ParseVerse> parseVerses = query.find();
+                if (parseVerses != null) {
+                    realm.delete(Verse.class);
+                    for (ParseVerse parseVerse : parseVerses) {
+                        Verse verse = ParseVerse.toVerse(parseVerse);
+                        realm.copyToRealmOrUpdate(verse);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            realm.commitTransaction();
+            realm.close();
+
+        }).start();
+    }
+
+    public void syncReference() {
+
+    }
 
 }

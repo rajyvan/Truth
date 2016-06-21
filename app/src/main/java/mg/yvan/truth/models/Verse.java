@@ -6,6 +6,7 @@ import android.database.Cursor;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 import mg.yvan.truth.TruthApplication;
 import mg.yvan.truth.models.database.DataBook;
 import mg.yvan.truth.models.database.DataVerse;
@@ -21,7 +22,8 @@ public class Verse extends RealmObject {
     public final static String DATE_ADDED = "dateAdded";
     private final static String REF_FORMAT = "%s %d:%d";
 
-    private String objectId;
+    @PrimaryKey
+    private String parseId;
     private int bookId;
     private int chapter;
     private int verse;
@@ -44,12 +46,12 @@ public class Verse extends RealmObject {
         return verse;
     }
 
-    public String getObjectId() {
-        return objectId;
+    public String getParseId() {
+        return parseId;
     }
 
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
+    public void setParseId(String parseId) {
+        this.parseId = parseId;
     }
 
     public int getBookId() {

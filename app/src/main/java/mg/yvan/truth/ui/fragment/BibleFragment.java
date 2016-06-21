@@ -21,6 +21,7 @@ import mg.yvan.truth.event.OnReferenceDetailEvent;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.models.database.DataBook;
 import mg.yvan.truth.models.database.DataVerse;
+import mg.yvan.truth.network.ServiceManager;
 import mg.yvan.truth.ui.adapter.BiblePagerAdapter;
 import mg.yvan.truth.ui.dialog.SelectBookDialog;
 
@@ -134,6 +135,7 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
+        ServiceManager.getInstance().syncFavorite();
         super.onStop();
     }
 

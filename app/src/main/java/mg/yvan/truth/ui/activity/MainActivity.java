@@ -42,6 +42,7 @@ import mg.yvan.truth.event.OnSearchQueryChange;
 import mg.yvan.truth.manager.SessionManager;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.models.database.RealmHelper;
+import mg.yvan.truth.network.ServiceManager;
 import mg.yvan.truth.ui.fragment.BaseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
 import mg.yvan.truth.ui.view.CustomActionBarDrawerToggle;
@@ -235,7 +236,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        // TODO sync
+        ServiceManager.getInstance().syncFavorite();
     }
 
     @Override

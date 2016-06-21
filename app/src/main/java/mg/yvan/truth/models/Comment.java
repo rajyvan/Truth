@@ -3,6 +3,7 @@ package mg.yvan.truth.models;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Yvan on 09/06/16.
@@ -11,6 +12,8 @@ public class Comment extends RealmObject {
 
     public final static String DATE_ADDED = "addedDate";
 
+    @PrimaryKey
+    private String parseId;
     private Reference mReference;
     private String text;
     private Date addedDate;
@@ -55,5 +58,13 @@ public class Comment extends RealmObject {
 
     public void setAuthorUrl(String authorUrl) {
         this.authorUrl = authorUrl;
+    }
+
+    public String getParseId() {
+        return parseId;
+    }
+
+    public void setParseId(String parseId) {
+        this.parseId = parseId;
     }
 }

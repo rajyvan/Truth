@@ -4,6 +4,7 @@ import java.util.Date;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Yvan on 16/06/16.
@@ -17,6 +18,8 @@ public class Reference extends RealmObject {
     public final static String START_VERSE = "startVerse";
     public final static String END_VERSE = "endVerse";
 
+    @PrimaryKey
+    private String parseId;
     private int bookId;
     private String bookName;
     private int chapter;
@@ -79,5 +82,13 @@ public class Reference extends RealmObject {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public String getParseId() {
+        return parseId;
+    }
+
+    public void setParseId(String parseId) {
+        this.parseId = parseId;
     }
 }

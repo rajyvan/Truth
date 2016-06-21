@@ -16,6 +16,7 @@ import de.greenrobot.event.EventBus;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnSearchQueryChange;
 import mg.yvan.truth.models.database.DataVerse;
+import mg.yvan.truth.network.ServiceManager;
 import mg.yvan.truth.ui.adapter.SearchResultAdapter;
 
 /**
@@ -62,6 +63,7 @@ public class SearchResultFragment extends BaseFragment implements LoaderManager.
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
+        ServiceManager.getInstance().syncFavorite();
         super.onStop();
     }
 
