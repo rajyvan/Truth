@@ -175,7 +175,12 @@ public class VerseView extends CardView {
         mTvVerse.setText(verse.getText());
         mTvRef.setText(verse.formatReference(getContext()));
         mBtnFavorite.setImageResource(R.drawable.like_on);
-        mBtnFavorite.setOnClickListener(v -> EventBus.getDefault().post(new OnFavoriteRemovedEvent(verse)));
+        mBtnFavorite.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new OnFavoriteRemovedEvent(verse));
+            }
+        });
 
         mBtnShare.setOnClickListener(v -> {
             ShareLinkContent content = new ShareLinkContent.Builder()

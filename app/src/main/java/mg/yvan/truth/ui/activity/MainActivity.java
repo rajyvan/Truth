@@ -181,7 +181,9 @@ public class MainActivity extends BaseActivity
                         request.executeAsync();
                         Profile.fetchProfileForCurrentAccessToken();
                     } else {
-                        ParseUser.getCurrentUser().unpinInBackground();
+                        if (ParseUser.getCurrentUser() != null) {
+                            ParseUser.getCurrentUser().unpinInBackground();
+                        }
                         ParseUser.logOutInBackground();
                     }
                 }
@@ -236,7 +238,6 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        ServiceManager.getInstance().syncFavorite();
     }
 
     @Override
@@ -320,6 +321,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         RealmHelper.getInstance().release();
+        ServiceManager.getInstance().syncFavorite();
         super.onDestroy();
     }
 }

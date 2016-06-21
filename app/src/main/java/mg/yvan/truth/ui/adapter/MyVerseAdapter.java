@@ -40,7 +40,7 @@ public class MyVerseAdapter extends RecyclerView.Adapter<MyVerseAdapter.VerseVie
     public void remove(Verse verse) {
         int position = mVerses.indexOf(verse);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
-        realm.executeTransaction(realm1 -> mVerses.get(position).deleteFromRealm());
+        realm.executeTransaction(realm1 -> mVerses.get(position).setDeleted(true));
         mVerses.remove(position);
         notifyItemRemoved(position);
     }

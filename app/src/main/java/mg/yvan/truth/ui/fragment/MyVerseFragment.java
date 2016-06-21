@@ -44,6 +44,7 @@ public class MyVerseFragment extends BaseFragment {
 
         final List<Verse> verses = RealmHelper.getInstance().getRealmForMainThread()
                 .where(Verse.class)
+                .equalTo("deleted", false)
                 .findAllSorted(Verse.DATE_ADDED, Sort.DESCENDING);
 
         if (!verses.isEmpty()) {
@@ -82,7 +83,6 @@ public class MyVerseFragment extends BaseFragment {
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
-        ServiceManager.getInstance().syncFavorite();
         super.onStop();
     }
 

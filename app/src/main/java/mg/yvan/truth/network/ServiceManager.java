@@ -57,11 +57,11 @@ public class ServiceManager {
         new Thread(() -> {
 
             ParseUser user = ParseUser.getCurrentUser();
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
             final ParseRelation<ParseVerse> relation = user.getRelation("verses");
 
             // Send all new local verses to server
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
             List<Verse> localVerses = realm.where(Verse.class).isNull("parseId").findAll();
             for (Verse verse : localVerses) {
                 ParseVerse parseVerse = ParseVerse.from(verse);
@@ -76,6 +76,16 @@ public class ServiceManager {
                     relation.add(parseVerse);
                     user.saveEventually();
                 }
+            }
+
+            // Delete all deleted verse on server
+            List<Verse> deletedVerses = realm.where(Verse.class).equalTo("deleted", true).findAll();
+            for (Verse verse : deletedVerses) {
+                ParseVerse parseVerse = ParseVerse.from(verse);
+                relation.remove(parseVerse);
+                user.saveEventually();
+                verse.deleteFromRealm();
+                parseVerse.deleteEventually();
             }
 
             // Get all distant verses to replace local

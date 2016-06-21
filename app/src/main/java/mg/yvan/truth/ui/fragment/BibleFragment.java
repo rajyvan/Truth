@@ -135,7 +135,7 @@ public class BibleFragment extends BaseFragment implements LoaderManager.LoaderC
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
-        ServiceManager.getInstance().syncFavorite();
+        //ServiceManager.getInstance().syncFavorite();
         super.onStop();
     }
 

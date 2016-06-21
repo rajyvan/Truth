@@ -136,17 +136,29 @@ public class DataVerse {
                 .equalTo(Verse.BOOK_ID, bookId)
                 .equalTo(Verse.CHAPTER, chapter)
                 .equalTo(Verse.VERSE, verse)
+                .equalTo("deleted", false)
                 .findFirst() != null;
     }
 
     public void addToFavorite() {
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
         realm.beginTransaction();
-        final Verse localVerse = realm.createObject(Verse.class);
+
+        Verse localVerse = RealmHelper.getInstance().getRealmForMainThread()
+                .where(Verse.class)
+                .equalTo(Verse.BOOK_ID, bookId)
+                .equalTo(Verse.CHAPTER, chapter)
+                .equalTo(Verse.VERSE, verse).findFirst();
+
+        if (localVerse == null) {
+            localVerse = realm.createObject(Verse.class);
+        }
+
         localVerse.setBookId((int) bookId);
         localVerse.setChapter(chapter);
         localVerse.setVerse(verse);
         localVerse.setText(text);
+        localVerse.setDeleted(false);
         String selection = DataBook.BOOK_REF_ID + "=" + bookId;
         Cursor cursor = TruthApplication.getAppContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
         if (cursor != null && cursor.moveToFirst()) {
@@ -166,7 +178,7 @@ public class DataVerse {
                 .equalTo(Verse.CHAPTER, chapter)
                 .equalTo(Verse.VERSE, verse).findFirst();
         if (localVerse != null) {
-            localVerse.deleteFromRealm();
+            localVerse.setDeleted(true);
         }
         realm.commitTransaction();
     }
