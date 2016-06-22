@@ -238,6 +238,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        ServiceManager.getInstance().sync();
     }
 
     @Override
@@ -321,7 +322,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         RealmHelper.getInstance().release();
-        ServiceManager.getInstance().syncFavorite();
+        ServiceManager.getInstance().sync();
         super.onDestroy();
     }
 }

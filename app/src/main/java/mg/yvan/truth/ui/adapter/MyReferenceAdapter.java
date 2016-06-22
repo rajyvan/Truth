@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import mg.yvan.truth.models.Comment;
 import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.RealmHelper;
 import mg.yvan.truth.ui.view.ReferenceView;
@@ -41,8 +42,11 @@ public class MyReferenceAdapter extends RecyclerView.Adapter<MyReferenceAdapter.
         int position = mReferences.indexOf(reference);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
         realm.executeTransaction(realm1 -> {
-            mReferences.get(position).getComments().deleteAllFromRealm();
-            mReferences.get(position).deleteFromRealm();
+            List<Comment> comments = mReferences.get(position).getComments();
+            for (Comment comment : comments) {
+                comment.setDeleted(true);
+            }
+            mReferences.get(position).setDeleted(true);
         });
         mReferences.remove(position);
         notifyItemRemoved(position);

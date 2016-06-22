@@ -27,6 +27,7 @@ public class Reference extends RealmObject {
     private int endVerse;
     private RealmList<Comment> mComments;
     private Date updateDate;
+    private boolean deleted;
 
     public int getBookId() {
         return bookId;
@@ -90,5 +91,13 @@ public class Reference extends RealmObject {
 
     public void setParseId(String parseId) {
         this.parseId = parseId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
