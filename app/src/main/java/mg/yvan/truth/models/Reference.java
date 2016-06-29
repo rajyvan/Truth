@@ -1,5 +1,6 @@
 package mg.yvan.truth.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmList;
@@ -27,7 +28,6 @@ public class Reference extends RealmObject {
     private int endVerse;
     private RealmList<Comment> mComments;
     private Date updateDate;
-    private boolean deleted;
 
     public int getBookId() {
         return bookId;
@@ -93,11 +93,4 @@ public class Reference extends RealmObject {
         this.parseId = parseId;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
 }

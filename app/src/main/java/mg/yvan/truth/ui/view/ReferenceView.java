@@ -84,20 +84,22 @@ public class ReferenceView extends CardView {
     public void populate(Reference reference, boolean isCommunity) {
         List<Comment> comments = new ArrayList<>(reference.getComments());
         Collections.sort(comments, (lhs, rhs) -> rhs.getAddedDate().compareTo(lhs.getAddedDate()));
-        final Comment comment = comments.get(0);
-        mTvDate.setText(mDateFormat.format(comment.getAddedDate()));
-        mTvComment.setText(comment.getText());
+        if (!comments.isEmpty()) {
+            final Comment comment = comments.get(0);
+            mTvDate.setText(mDateFormat.format(comment.getAddedDate()));
+            mTvComment.setText(comment.getText());
 
-        int paddingTop = getResources().getDimensionPixelSize(isCommunity ? R.dimen.view_comment_public_padding_top : R.dimen.view_comment_normal_padding_top);
-        mContainer.setPadding(0, paddingTop, 0, 0);
+            int paddingTop = getResources().getDimensionPixelSize(isCommunity ? R.dimen.view_comment_public_padding_top : R.dimen.view_comment_normal_padding_top);
+            mContainer.setPadding(0, paddingTop, 0, 0);
 
-        if (isCommunity) {
-            mTvName.setText(comment.getAuthor());
-            mIvPhoto.setVisibility(VISIBLE);
-            Glide.with(getContext()).load(comment.getAuthorUrl()).placeholder(R.mipmap.ic_launcher).into(mIvPhoto);
-        } else {
-            mTvName.setText(String.format(getContext().getString(R.string.comment_ref), reference.getBookName(), reference.getChapter(), reference.getStartVerse(), reference.getEndVerse()));
-            mIvPhoto.setVisibility(GONE);
+            if (isCommunity) {
+                mTvName.setText(comment.getAuthor());
+                mIvPhoto.setVisibility(VISIBLE);
+                Glide.with(getContext()).load(comment.getAuthorUrl()).placeholder(R.mipmap.ic_launcher).into(mIvPhoto);
+            } else {
+                mTvName.setText(String.format(getContext().getString(R.string.comment_ref), reference.getBookName(), reference.getChapter(), reference.getStartVerse(), reference.getEndVerse()));
+                mIvPhoto.setVisibility(GONE);
+            }
         }
 
         if (comments.size() > 1) {

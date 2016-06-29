@@ -48,9 +48,12 @@
             android:name="com.parse.APPLICATION_ID"
             android:value="truth"/>
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider1792837637604323"
-                  android:name="com.facebook.FacebookContentProvider"
+        <provider android:name="com.facebook.FacebookContentProvider"
+                  android:authorities="com.facebook.app.FacebookContentProvider1792837637604323"
                   android:exported="true"/>
+
+        <service android:name=".service.SynchroService"
+                 android:exported="false"/>
     </application>
 
 </manifest>

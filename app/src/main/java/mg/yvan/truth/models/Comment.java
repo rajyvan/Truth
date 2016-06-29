@@ -1,5 +1,6 @@
 package mg.yvan.truth.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -19,7 +20,6 @@ public class Comment extends RealmObject {
     private Date addedDate;
     private String author;
     private String authorUrl;
-    private boolean deleted;
 
     public Reference getReference() {
         return mReference;
@@ -69,11 +69,4 @@ public class Comment extends RealmObject {
         this.parseId = parseId;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
 }

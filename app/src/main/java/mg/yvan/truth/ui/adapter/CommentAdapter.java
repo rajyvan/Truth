@@ -47,11 +47,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void remove(Comment comment) {
         int position = mComments.indexOf(comment);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
+        //TODO
         realm.executeTransaction(realm1 -> {
             final Reference reference = mComments.get(position).getReference();
-            mComments.get(position).setDeleted(true);
+            mComments.get(position).deleteFromRealm();
             if (reference.getComments().size() == 0) {
-                reference.setDeleted(true);
+                reference.deleteFromRealm();
             }
         });
         mComments.remove(position);

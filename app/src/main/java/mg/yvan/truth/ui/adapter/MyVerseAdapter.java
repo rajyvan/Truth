@@ -9,6 +9,7 @@ import java.util.List;
 import io.realm.Realm;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.models.database.RealmHelper;
+import mg.yvan.truth.models.parse.ParseVerse;
 import mg.yvan.truth.ui.view.VerseView;
 
 /**
@@ -39,10 +40,14 @@ public class MyVerseAdapter extends RecyclerView.Adapter<MyVerseAdapter.VerseVie
 
     public void remove(Verse verse) {
         int position = mVerses.indexOf(verse);
+        ParseVerse parseVerse = ParseVerse.from(mVerses.get(position));
+
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
-        realm.executeTransaction(realm1 -> mVerses.get(position).setDeleted(true));
+        realm.executeTransaction(realm1 -> mVerses.get(position).deleteFromRealm());
         mVerses.remove(position);
         notifyItemRemoved(position);
+
+        parseVerse.deleteEventually();
     }
 
     static class VerseViewHolder extends RecyclerView.ViewHolder {

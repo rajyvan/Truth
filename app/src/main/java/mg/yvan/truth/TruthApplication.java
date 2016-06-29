@@ -8,6 +8,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.io.IOException;
 
@@ -56,6 +57,7 @@ public class TruthApplication extends Application {
         Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
 
         ParseFacebookUtils.initialize(this);
+        ParseUser.enableAutomaticUser();
 
         RealmConfiguration configuration = new RealmConfiguration.Builder(this)
                 .schemaVersion(1)

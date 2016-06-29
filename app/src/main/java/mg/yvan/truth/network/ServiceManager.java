@@ -28,19 +28,6 @@ import mg.yvan.truth.models.parse.ParseVerse;
  */
 public class ServiceManager {
 
-    private static ServiceManager singleInstance;
-
-    private ServiceManager() {
-
-    }
-
-    public static ServiceManager getInstance() {
-        if (singleInstance == null) {
-            singleInstance = new ServiceManager();
-        }
-        return singleInstance;
-    }
-
     private static boolean isUserLogged() {
         final ParseUser user = ParseUser.getCurrentUser();
         return user != null && ParseFacebookUtils.isLinked(user);
@@ -56,23 +43,21 @@ public class ServiceManager {
         return isUserLogged() && isConnexionAvailable();
     }
 
-    public void sync() {
-        if (!isSyncAllowed()) return;
-
-        new Thread(() -> {
-            //syncFavorite();
+    public static void sync() {
+        if (isSyncAllowed()) {
+            syncFavorite();
             syncReference();
-        }).start();
+        }
     }
 
-    private void syncFavorite() {
+    private static void syncFavorite() {
         ParseUser user = ParseUser.getCurrentUser();
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         final ParseRelation<ParseVerse> relation = user.getRelation("verses");
 
         // Send all new local verses to server
-        List<Verse> localVerses = realm.where(Verse.class).isNull("parseId").findAll();
+        List<Verse> localVerses = realm.where(Verse.class).findAll();
         for (Verse verse : localVerses) {
             ParseVerse parseVerse = ParseVerse.from(verse);
             try {
@@ -84,18 +69,12 @@ public class ServiceManager {
                 verse.setParseId(parseVerse.getObjectId());
                 realm.copyToRealmOrUpdate(verse);
                 relation.add(parseVerse);
-                user.saveEventually();
+                try {
+                    user.save();
+                } catch (ParseException e) {
+                    // do nothing
+                }
             }
-        }
-
-        // Delete all deleted verse on server
-        List<Verse> deletedVerses = realm.where(Verse.class).equalTo("deleted", true).findAll();
-        for (Verse verse : deletedVerses) {
-            ParseVerse parseVerse = ParseVerse.from(verse);
-            relation.remove(parseVerse);
-            user.saveEventually();
-            verse.deleteFromRealm();
-            parseVerse.deleteEventually();
         }
 
         // Get all distant verses to replace local
@@ -117,7 +96,7 @@ public class ServiceManager {
         realm.close();
     }
 
-    private void syncReference() {
+    private static void syncReference() {
         ParseUser user = ParseUser.getCurrentUser();
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -168,30 +147,13 @@ public class ServiceManager {
             }
         }
 
-        // Delete all deleted comment on server
-        List<Comment> deletedComments = realm.where(Comment.class).equalTo("deleted", true).findAll();
-        for (Comment comment : deletedComments) {
-            ParseComment parseComment = ParseComment.from(comment);
-            parseComment.deleteEventually();
-            parseComment.deleteEventually();
-        }
-
-        // Delete all deleted reference on server
-        List<Reference> deletedReferences = realm.where(Reference.class).equalTo("deleted", true).findAll();
-        for (Reference reference : deletedReferences) {
-            ParseReference parseReference = ParseReference.from(reference);
-            relation.remove(parseReference);
-            user.saveEventually();
-            parseReference.deleteEventually();
-        }
-
         // Get all distant references to replace local
         ParseQuery<ParseReference> query = relation.getQuery();
         try {
             List<ParseReference> parseReferences = query.find();
             if (parseReferences != null) {
-                //realm.delete(Reference.class);
-                //realm.delete(Comment.class);
+                realm.delete(Reference.class);
+                realm.delete(Comment.class);
                 for (ParseReference parseReference : parseReferences) {
                     Reference reference = ParseReference.toReference(parseReference);
 

@@ -30,7 +30,6 @@ public class Verse extends RealmObject {
     private String text;
     private String book;
     private Date dateAdded;
-    private boolean deleted;
 
     public static Verse from(DataVerse dataVerse) {
         final Verse verse = new Verse();
@@ -101,14 +100,6 @@ public class Verse extends RealmObject {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public String formatReference(Context context) {

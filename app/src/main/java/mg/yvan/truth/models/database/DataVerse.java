@@ -5,11 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.parse.ParseException;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
 import java.util.Date;
 
 import io.realm.Realm;
 import mg.yvan.truth.TruthApplication;
 import mg.yvan.truth.models.Verse;
+import mg.yvan.truth.models.parse.ParseVerse;
 import mg.yvan.truth.provider.BibleContentProvider;
 
 /**
@@ -136,7 +142,6 @@ public class DataVerse {
                 .equalTo(Verse.BOOK_ID, bookId)
                 .equalTo(Verse.CHAPTER, chapter)
                 .equalTo(Verse.VERSE, verse)
-                .equalTo("deleted", false)
                 .findFirst() != null;
     }
 
@@ -158,7 +163,6 @@ public class DataVerse {
         localVerse.setChapter(chapter);
         localVerse.setVerse(verse);
         localVerse.setText(text);
-        localVerse.setDeleted(false);
         String selection = DataBook.BOOK_REF_ID + "=" + bookId;
         Cursor cursor = TruthApplication.getAppContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
         if (cursor != null && cursor.moveToFirst()) {
@@ -167,6 +171,26 @@ public class DataVerse {
         }
         localVerse.setDateAdded(new Date());
         realm.commitTransaction();
+
+        ParseVerse parseVerse = ParseVerse.from(localVerse);
+        Verse finalLocalVerse = localVerse;
+        parseVerse.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm1) {
+                        if (finalLocalVerse.isValid()) {
+                            finalLocalVerse.setParseId(parseVerse.getObjectId());
+                            ParseUser user = ParseUser.getCurrentUser();
+                            ParseRelation<ParseVerse> relation = user.getRelation("verses");
+                            relation.add(parseVerse);
+                            user.saveEventually();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void removeFromFavorite() {
@@ -177,10 +201,15 @@ public class DataVerse {
                 .equalTo(Verse.BOOK_ID, bookId)
                 .equalTo(Verse.CHAPTER, chapter)
                 .equalTo(Verse.VERSE, verse).findFirst();
+
+        ParseVerse parseVerse = ParseVerse.from(localVerse);
+
         if (localVerse != null) {
-            localVerse.setDeleted(true);
+            localVerse.deleteFromRealm();
         }
         realm.commitTransaction();
+
+        parseVerse.deleteEventually();
     }
 
 }

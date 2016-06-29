@@ -41,12 +41,13 @@ public class MyReferenceAdapter extends RecyclerView.Adapter<MyReferenceAdapter.
     public void remove(Reference reference) {
         int position = mReferences.indexOf(reference);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
+        //TODO
         realm.executeTransaction(realm1 -> {
             List<Comment> comments = mReferences.get(position).getComments();
             for (Comment comment : comments) {
-                comment.setDeleted(true);
+                comment.deleteFromRealm();
             }
-            mReferences.get(position).setDeleted(true);
+            mReferences.get(position).deleteFromRealm();
         });
         mReferences.remove(position);
         notifyItemRemoved(position);

@@ -44,7 +44,6 @@ public class MyVerseFragment extends BaseFragment {
 
         final List<Verse> verses = RealmHelper.getInstance().getRealmForMainThread()
                 .where(Verse.class)
-                .equalTo("deleted", false)
                 .findAllSorted(Verse.DATE_ADDED, Sort.DESCENDING);
 
         if (!verses.isEmpty()) {

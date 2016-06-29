@@ -1,12 +1,16 @@
 package mg.yvan.truth.ui.activity;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -25,8 +29,6 @@ import com.facebook.GraphRequest;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
@@ -42,7 +44,7 @@ import mg.yvan.truth.event.OnSearchQueryChange;
 import mg.yvan.truth.manager.SessionManager;
 import mg.yvan.truth.manager.TruthFragmentManager;
 import mg.yvan.truth.models.database.RealmHelper;
-import mg.yvan.truth.network.ServiceManager;
+import mg.yvan.truth.service.SynchroService;
 import mg.yvan.truth.ui.fragment.BaseFragment;
 import mg.yvan.truth.ui.fragment.SearchResultFragment;
 import mg.yvan.truth.ui.view.CustomActionBarDrawerToggle;
@@ -67,6 +69,10 @@ public class MainActivity extends BaseActivity
     private MenuItem mFacebookMenuItem;
     private MenuItem mLogoutMenuItem;
 
+    private ProgressDialog mProgressDialog;
+
+    private SyncReceiver mSyncReceiver;
+
     @Override
     protected int getLayout() {
         return R.layout.activity_main;
@@ -79,6 +85,11 @@ public class MainActivity extends BaseActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         configureToolbar();
+
+        IntentFilter syncIntentFilter = new IntentFilter(SynchroService.ACTION_BROADCAST_END);
+        mSyncReceiver = new SyncReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mSyncReceiver, syncIntentFilter);
+
 
         final View headerView = mNavView.getHeaderView(0);
         mIvProfilePhoto = (ImageView) headerView.findViewById(R.id.iv_photo);
@@ -113,19 +124,6 @@ public class MainActivity extends BaseActivity
 
         mDrawerLayout.addDrawerListener(mToggle);
         mDrawerLayout.setScrimColor(Color.TRANSPARENT);
-
-        /*mToolbar.post(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < mToolbar.getChildCount(); i++) {
-                    // make toggle drawable center-vertical
-                    if (mToolbar.getChildAt(i) instanceof ImageButton) {
-                        Toolbar.LayoutParams lp = (Toolbar.LayoutParams) mToolbar.getChildAt(i).getLayoutParams();
-                        lp.gravity = Gravity.CENTER_VERTICAL;
-                    }
-                }
-            }
-        });*/
     }
 
     private void configureBackStackListener() {
@@ -162,31 +160,36 @@ public class MainActivity extends BaseActivity
         mFacebookMenuItem.setOnMenuItemClickListener(item -> {
             List<String> permissions = Arrays.asList(getResources().getStringArray(R.array.facebook_permissions));
 
-            ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
-                @Override
-                public void done(ParseUser user, ParseException e) {
-                    if (e == null && user != null) {
-                        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), (object, response) -> {
-                            try {
-                                String mail = object.getString("email");
-                                user.setEmail(mail);
-                                user.saveEventually();
-                            } catch (JSONException e1) {
-                                // do nothing
-                            }
-                        });
-                        Bundle parameters = new Bundle();
-                        parameters.putString("fields", "email");
-                        request.setParameters(parameters);
-                        request.executeAsync();
-                        Profile.fetchProfileForCurrentAccessToken();
-                    } else {
-                        if (ParseUser.getCurrentUser() != null) {
-                            ParseUser.getCurrentUser().unpinInBackground();
+            ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, (user, e) -> {
+                if (e == null && user != null) {
+                    GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), (object, response) -> {
+                        try {
+                            String mail = object.getString("email");
+                            user.setEmail(mail);
+                            user.saveEventually();
+                        } catch (JSONException e1) {
+                            // do nothing
                         }
-                        ParseUser.logOutInBackground();
-                    }
+                    });
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "email");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+                    Profile.fetchProfileForCurrentAccessToken();
+                } else {
+                    ParseUser.logOutInBackground();
                 }
+
+                if (mProgressDialog == null) {
+                    mProgressDialog = new ProgressDialog(this);
+                    mProgressDialog.setIndeterminate(true);
+                    mProgressDialog.setMessage("Synchronisation de données");
+                }
+
+                mProgressDialog.show();
+                Intent intent = new Intent(this, SynchroService.class);
+                intent.setAction(SynchroService.ACTION_SYNC);
+                startService(intent);
             });
             return true;
         });
@@ -238,7 +241,6 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        ServiceManager.getInstance().sync();
     }
 
     @Override
@@ -322,7 +324,19 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         RealmHelper.getInstance().release();
-        ServiceManager.getInstance().sync();
         super.onDestroy();
+    }
+
+    private class SyncReceiver extends BroadcastReceiver {
+
+        private SyncReceiver() {
+
+        }
+
+        public void onReceive(Context context, Intent intent) {
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+            }
+        }
     }
 }
