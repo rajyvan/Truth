@@ -27,7 +27,7 @@ public class BibleItemFragment extends BaseFragment implements LoaderManager.Loa
     private static final int BIBLE_LOADER_ID = 1;
     private static final int SCROLL_DELAY = 400;
 
-    @Bind(R.id.recylerview)
+    @Bind(R.id.recyclerview)
     RecyclerView mRecylerView;
 
     private long bookId;

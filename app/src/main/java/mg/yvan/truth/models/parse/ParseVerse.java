@@ -21,7 +21,8 @@ public class ParseVerse extends ParseObject {
         parseVerse.setBook(verse.getBook());
         parseVerse.setChapter(verse.getChapter());
         parseVerse.setDateAdded(verse.getDateAdded());
-        parseVerse.setObjectId(verse.getParseId());
+        String parseId = verse.getParseId();
+        parseVerse.setObjectId(parseId.startsWith("none") ? null : parseId);
         return parseVerse;
     }
 

@@ -14,6 +14,7 @@ import java.util.Date;
 
 import io.realm.Realm;
 import mg.yvan.truth.TruthApplication;
+import mg.yvan.truth.manager.SessionManager;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.models.parse.ParseVerse;
 import mg.yvan.truth.provider.BibleContentProvider;
@@ -157,29 +158,27 @@ public class DataVerse {
 
         if (localVerse == null) {
             localVerse = realm.createObject(Verse.class);
-        }
+            localVerse.setParseId(Verse.generateId());
 
-        localVerse.setBookId((int) bookId);
-        localVerse.setChapter(chapter);
-        localVerse.setVerse(verse);
-        localVerse.setText(text);
-        String selection = DataBook.BOOK_REF_ID + "=" + bookId;
-        Cursor cursor = TruthApplication.getAppContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            final DataBook book = new DataBook().fromCursor(cursor);
-            localVerse.setBook(book.getName());
-        }
-        localVerse.setDateAdded(new Date());
-        realm.commitTransaction();
+            localVerse.setBookId((int) bookId);
+            localVerse.setChapter(chapter);
+            localVerse.setVerse(verse);
+            localVerse.setText(text);
+            String selection = DataBook.BOOK_REF_ID + "=" + bookId;
+            Cursor cursor = TruthApplication.getAppContext().getContentResolver().query(DataBook.CONTENT_URI, DataBook.PROJECTION_ALL, selection, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final DataBook book = new DataBook().fromCursor(cursor);
+                localVerse.setBook(book.getName());
+            }
+            localVerse.setDateAdded(new Date());
+            realm.commitTransaction();
 
-        ParseVerse parseVerse = ParseVerse.from(localVerse);
-        Verse finalLocalVerse = localVerse;
-        parseVerse.saveEventually(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm1) {
+            if (SessionManager.getInstance().isLogged()) {
+                ParseVerse parseVerse = ParseVerse.from(localVerse);
+                Verse finalLocalVerse = localVerse;
+                parseVerse.saveEventually(e -> {
+                    if (e != null) return;
+                    realm.executeTransaction(realm1 -> {
                         if (finalLocalVerse.isValid()) {
                             finalLocalVerse.setParseId(parseVerse.getObjectId());
                             ParseUser user = ParseUser.getCurrentUser();
@@ -187,10 +186,10 @@ public class DataVerse {
                             relation.add(parseVerse);
                             user.saveEventually();
                         }
-                    }
+                    });
                 });
             }
-        });
+        }
     }
 
     public void removeFromFavorite() {
@@ -209,7 +208,9 @@ public class DataVerse {
         }
         realm.commitTransaction();
 
-        parseVerse.deleteEventually();
+        if (SessionManager.getInstance().isLogged()) {
+            parseVerse.deleteEventually();
+        }
     }
 
 }

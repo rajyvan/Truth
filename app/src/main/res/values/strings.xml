@@ -25,6 +25,7 @@
     <string name="anonyme">Anonyme</string>
     <string name="search_result">Résultats de recherche</string>
     <string name="no_favorite_verse">Aucun verset mis en favori</string>
+    <string name="text_empty">Liste vide. Aucun élément ajouté</string>
     <string name="no_comment_yet">Pas de commentaire encore</string>
     <string name="new_comment">Nouveau commentaire</string>
     <string name="new_comment_hint">Entrer ici votre commentaire</string>

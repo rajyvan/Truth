@@ -27,7 +27,7 @@ public class SearchResultFragment extends BaseFragment implements LoaderManager.
 
     @Bind(R.id.tv_result)
     TextView mTvResult;
-    @Bind(R.id.recylerview)
+    @Bind(R.id.recyclerview)
     RecyclerView mRecylerview;
 
     private String mCurrentSearchKey;

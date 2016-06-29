@@ -53,4 +53,5 @@ dependencies {
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.parse:parse-android:1.13.1'
     compile 'com.parse:parsefacebookutils-v4-android:1.10.4@aar'
+    compile 'com.github.thorbenprimke:realm-recyclerview:0.9.20'
 }

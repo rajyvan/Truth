@@ -21,6 +21,7 @@ public class Verse extends RealmObject {
     public final static String VERSE = "verse";
     public final static String DATE_ADDED = "dateAdded";
     private final static String REF_FORMAT = "%s %d:%d";
+    private final static String ID_FORMAT = "none_%d";
 
     @PrimaryKey
     private String parseId;
@@ -42,8 +43,13 @@ public class Verse extends RealmObject {
             verse.setVerse(dataVerse.getVerse());
             verse.setChapter(dataVerse.getChapter());
             verse.setBookId((int) dataVerse.getBookId());
+            verse.setParseId(generateId());
         }
         return verse;
+    }
+
+    public static String generateId() {
+        return String.format(ID_FORMAT, new Date().getTime());
     }
 
     public String getParseId() {

@@ -26,7 +26,7 @@ import mg.yvan.truth.ui.adapter.MyReferenceAdapter;
  */
 public class MyCommentsFragment extends BaseFragment {
 
-    @Bind(R.id.recylerview)
+    @Bind(R.id.recyclerview)
     RecyclerView mRecyclerView;
     @Bind(R.id.tv_number)
     TextView mTvNumber;

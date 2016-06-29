@@ -1,12 +1,12 @@
 package mg.yvan.truth.ui.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.realm.Realm;
+import io.realm.RealmBasedRecyclerViewAdapter;
+import io.realm.RealmResults;
+import io.realm.RealmViewHolder;
 import mg.yvan.truth.models.Verse;
 import mg.yvan.truth.models.database.RealmHelper;
 import mg.yvan.truth.models.parse.ParseVerse;
@@ -15,42 +15,31 @@ import mg.yvan.truth.ui.view.VerseView;
 /**
  * Created by Yvan on 14/06/16.
  */
-public class MyVerseAdapter extends RecyclerView.Adapter<MyVerseAdapter.VerseViewHolder> {
+public class MyVerseAdapter extends RealmBasedRecyclerViewAdapter<Verse, MyVerseAdapter.VerseViewHolder> {
 
-    private List<Verse> mVerses;
-
-    public MyVerseAdapter(List<Verse> verses) {
-        mVerses = new ArrayList<>(verses);
+    public MyVerseAdapter(Context context, RealmResults<Verse> realmResults, boolean automaticUpdate, boolean animateResults) {
+        super(context, realmResults, automaticUpdate, animateResults);
     }
 
     @Override
-    public VerseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new VerseViewHolder(new VerseView(parent.getContext()));
+    public VerseViewHolder onCreateRealmViewHolder(ViewGroup parent, int viewType) {
+        return new MyVerseAdapter.VerseViewHolder(new VerseView(parent.getContext()));
     }
 
     @Override
-    public void onBindViewHolder(VerseViewHolder holder, int position) {
-        holder.mVerseView.populate(mVerses.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mVerses == null ? 0 : mVerses.size();
+    public void onBindRealmViewHolder(VerseViewHolder verseViewHolder, int i) {
+        final Verse verse = realmResults.get(i);
+        verseViewHolder.mVerseView.populate(verse);
     }
 
     public void remove(Verse verse) {
-        int position = mVerses.indexOf(verse);
-        ParseVerse parseVerse = ParseVerse.from(mVerses.get(position));
-
+        ParseVerse parseVerse = ParseVerse.from(verse);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
-        realm.executeTransaction(realm1 -> mVerses.get(position).deleteFromRealm());
-        mVerses.remove(position);
-        notifyItemRemoved(position);
-
+        realm.executeTransaction(realm1 -> verse.deleteFromRealm());
         parseVerse.deleteEventually();
     }
 
-    static class VerseViewHolder extends RecyclerView.ViewHolder {
+    static class VerseViewHolder extends RealmViewHolder {
 
         VerseView mVerseView;
 
