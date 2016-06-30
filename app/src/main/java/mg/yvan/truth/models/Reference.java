@@ -18,6 +18,7 @@ public class Reference extends RealmObject {
     public final static String CHAPTER = "chapter";
     public final static String START_VERSE = "startVerse";
     public final static String END_VERSE = "endVerse";
+    private final static String ID_FORMAT = "none_%d";
 
     @PrimaryKey
     private String parseId;
@@ -28,6 +29,10 @@ public class Reference extends RealmObject {
     private int endVerse;
     private RealmList<Comment> mComments;
     private Date updateDate;
+
+    public static String generateId() {
+        return String.format(ID_FORMAT, new Date().getTime());
+    }
 
     public int getBookId() {
         return bookId;

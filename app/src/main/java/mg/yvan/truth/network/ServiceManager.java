@@ -182,4 +182,37 @@ public class ServiceManager {
 
     }
 
+    public static void addComment(Reference reference, Comment comment) {
+        if (!isSyncAllowed()) return;
+
+        ParseComment parseComment = ParseComment.from(comment);
+        ParseReference parseReference = ParseReference.from(reference);
+        ParseUser user = ParseUser.getCurrentUser();
+        final ParseRelation<ParseReference> relation = user.getRelation("references");
+
+        parseReference.saveEventually(e -> {
+            if (e != null) return;
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            reference.setParseId(parseReference.getObjectId());
+            realm.copyToRealmOrUpdate(reference);
+            realm.commitTransaction();
+            realm.close();
+            parseComment.setReference(parseReference);
+            parseComment.saveEventually(e1 -> {
+                if (e1 != null) return;
+                Realm realm1 = Realm.getDefaultInstance();
+                realm1.beginTransaction();
+                comment.setParseId(parseComment.getObjectId());
+                realm1.copyToRealmOrUpdate(comment);
+                realm1.commitTransaction();
+                realm1.close();
+                final ParseRelation<ParseComment> relationReference = parseReference.getRelation("comments");
+                relationReference.add(parseComment);
+                relation.add(parseReference);
+                user.saveEventually();
+            });
+        });
+    }
+
 }

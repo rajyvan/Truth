@@ -1,6 +1,5 @@
 package mg.yvan.truth.models;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -12,6 +11,7 @@ import io.realm.annotations.PrimaryKey;
 public class Comment extends RealmObject {
 
     public final static String DATE_ADDED = "addedDate";
+    private final static String ID_FORMAT = "none_%d";
 
     @PrimaryKey
     private String parseId;
@@ -20,6 +20,10 @@ public class Comment extends RealmObject {
     private Date addedDate;
     private String author;
     private String authorUrl;
+
+    public static String generateId() {
+        return String.format(ID_FORMAT, new Date().getTime());
+    }
 
     public Reference getReference() {
         return mReference;

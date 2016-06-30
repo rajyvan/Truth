@@ -57,7 +57,6 @@ public class TruthApplication extends Application {
         Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
 
         ParseFacebookUtils.initialize(this);
-        ParseUser.enableAutomaticUser();
 
         RealmConfiguration configuration = new RealmConfiguration.Builder(this)
                 .schemaVersion(1)

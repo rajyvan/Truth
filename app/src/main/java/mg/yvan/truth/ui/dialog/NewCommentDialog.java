@@ -31,15 +31,14 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
 import mg.yvan.truth.R;
-import mg.yvan.truth.event.OnNewCommentEvent;
 import mg.yvan.truth.models.Comment;
 import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.DataVerse;
 import mg.yvan.truth.models.database.RealmHelper;
+import mg.yvan.truth.network.ServiceManager;
 
 /**
  * Created by Yvan on 07/06/16.
@@ -131,6 +130,7 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
                     reference.setStartVerse(mReference.getStartVerse());
                     reference.setEndVerse(mEndVerse.getSelectedItemPosition() + 1);
                     reference.setBookName(mReference.getBookName());
+                    reference.setParseId(Reference.generateId());
                 }
                 reference.setUpdateDate(new Date());
 
@@ -145,13 +145,14 @@ public class NewCommentDialog extends DialogFragment implements LoaderManager.Lo
                 comment.setAddedDate(new Date());
                 comment.setReference(reference);
                 comment.setReference(reference);
+                comment.setParseId(Comment.generateId());
                 if (user != null && ParseFacebookUtils.isLinked(user)) {
                     comment.setAuthor(user.getUsername());
                     comment.setAuthorUrl(user.getString("photo"));
                 }
                 comments.add(comment);
                 realm.commitTransaction();
-                EventBus.getDefault().post(new OnNewCommentEvent(comment));
+                ServiceManager.addComment(reference, comment);
             }
             dismiss();
         });

@@ -1,70 +1,56 @@
 package mg.yvan.truth.ui.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmBasedRecyclerViewAdapter;
+import io.realm.RealmResults;
+import io.realm.RealmViewHolder;
 import mg.yvan.truth.models.Comment;
 import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.RealmHelper;
+import mg.yvan.truth.models.parse.ParseComment;
+import mg.yvan.truth.models.parse.ParseReference;
 import mg.yvan.truth.ui.view.CommentView;
 
 /**
  * Created by Yvan on 14/06/16.
  */
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+public class CommentAdapter extends RealmBasedRecyclerViewAdapter<Comment, CommentAdapter.CommentViewHolder> {
 
-    private List<Comment> mComments;
-
-    public CommentAdapter(List<Comment> comments) {
-        if (comments == null) {
-            mComments = new ArrayList<>();
-        } else {
-            mComments = new ArrayList<>(comments);
-            Collections.sort(mComments, (lhs, rhs) -> rhs.getAddedDate().compareTo(lhs.getAddedDate()));
-        }
+    public CommentAdapter(Context context, RealmResults<Comment> realmResults, boolean automaticUpdate, boolean animateResults) {
+        super(context, realmResults, automaticUpdate, animateResults);
     }
 
     @Override
-    public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new CommentViewHolder(new CommentView(parent.getContext()));
+    public CommentViewHolder onCreateRealmViewHolder(ViewGroup viewGroup, int i) {
+        return new CommentViewHolder(new CommentView(viewGroup.getContext()));
     }
 
     @Override
-    public void onBindViewHolder(CommentViewHolder holder, int position) {
-        holder.mCommentView.populate(mComments.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mComments == null ? 0 : mComments.size();
+    public void onBindRealmViewHolder(CommentViewHolder commentViewHolder, int i) {
+        commentViewHolder.mCommentView.populate(realmResults.get(i));
     }
 
     public void remove(Comment comment) {
-        int position = mComments.indexOf(comment);
         Realm realm = RealmHelper.getInstance().getRealmForMainThread();
-        //TODO
         realm.executeTransaction(realm1 -> {
-            final Reference reference = mComments.get(position).getReference();
-            mComments.get(position).deleteFromRealm();
+            final Reference reference = comment.getReference();
+            ParseComment parseComment = ParseComment.from(comment);
+            parseComment.deleteEventually();
+            comment.deleteFromRealm();
             if (reference.getComments().size() == 0) {
+                ParseReference parseReference = ParseReference.from(reference);
+                parseReference.deleteEventually();
                 reference.deleteFromRealm();
             }
         });
-        mComments.remove(position);
-        notifyItemRemoved(position);
     }
 
-    public void addComment(Comment comment) {
-        mComments.add(0, comment);
-        notifyItemInserted(0);
-    }
-
-    static class CommentViewHolder extends RecyclerView.ViewHolder {
+    static class CommentViewHolder extends RealmViewHolder {
 
         CommentView mCommentView;
 

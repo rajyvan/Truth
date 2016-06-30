@@ -22,6 +22,8 @@ public class ParseReference extends ParseObject {
         parseReference.setStartVerse(reference.getStartVerse());
         parseReference.setEndVerse(reference.getEndVerse());
         parseReference.setUpdateDate(reference.getUpdateDate());
+        String parseId = reference.getParseId();
+        parseReference.setObjectId(parseId.startsWith("none") ? null : parseId);
         return parseReference;
     }
 

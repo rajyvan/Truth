@@ -1,5 +1,7 @@
 package mg.yvan.truth.models.parse;
 
+import android.text.TextUtils;
+
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -21,6 +23,8 @@ public class ParseComment extends ParseObject {
         parseComment.setAddedDate(comment.getAddedDate());
         parseComment.setAuthor(comment.getAuthor());
         parseComment.setAuthorUrl(comment.getAuthorUrl());
+        String parseId = comment.getParseId();
+        parseComment.setObjectId(parseId.startsWith("none") ? null : parseId);
         return parseComment;
     }
 
@@ -63,7 +67,9 @@ public class ParseComment extends ParseObject {
     }
 
     public void setAuthor(String author) {
-        put("author", author);
+        if (!TextUtils.isEmpty(author)) {
+            put("author", author);
+        }
     }
 
     public String getAuthorUrl() {
@@ -71,6 +77,8 @@ public class ParseComment extends ParseObject {
     }
 
     public void setAuthorUrl(String authorUrl) {
-        put("authorUrl", authorUrl);
+        if (!TextUtils.isEmpty(authorUrl)) {
+            put("authorUrl", authorUrl);
+        }
     }
 }

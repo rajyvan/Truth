@@ -9,18 +9,20 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import butterknife.Bind;
+import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import de.greenrobot.event.EventBus;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import mg.yvan.truth.R;
 import mg.yvan.truth.event.OnCommentDeletedEvent;
-import mg.yvan.truth.event.OnNewCommentEvent;
+import mg.yvan.truth.models.Comment;
 import mg.yvan.truth.models.Reference;
 import mg.yvan.truth.models.database.DataVerse;
+import mg.yvan.truth.models.database.RealmHelper;
 import mg.yvan.truth.ui.adapter.CommentAdapter;
 import mg.yvan.truth.ui.dialog.NewCommentDialog;
 
@@ -36,7 +38,7 @@ public class EditCommentFragment extends BaseFragment implements LoaderManager.L
     @Bind(R.id.tv_verse)
     TextView mTvVerse;
     @Bind(R.id.recycler)
-    RecyclerView mRecycler;
+    RealmRecyclerView mRecycler;
     @Bind(R.id.fab)
     FloatingActionButton mFab;
 
@@ -66,8 +68,13 @@ public class EditCommentFragment extends BaseFragment implements LoaderManager.L
             NewCommentDialog.show((AppCompatActivity) getActivity(), mReference);
         });
 
-        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mCommentAdapter = new CommentAdapter(mReference.getComments());
+        final RealmResults<Comment> comments = RealmHelper.getInstance().getRealmForMainThread()
+                .where(Comment.class)
+                .equalTo("mReference.bookId", mReference.getBookId())
+                .equalTo("mReference.chapter", mReference.getChapter())
+                .equalTo("mReference.startVerse", mReference.getStartVerse())
+                .findAllSorted(Comment.DATE_ADDED, Sort.DESCENDING);
+        mCommentAdapter = new CommentAdapter(getActivity(), comments, true, true);
         mRecycler.setAdapter(mCommentAdapter);
     }
 
@@ -96,10 +103,6 @@ public class EditCommentFragment extends BaseFragment implements LoaderManager.L
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
-    }
-
-    public void onEventMainThread(OnNewCommentEvent event) {
-        mCommentAdapter.addComment(event.getComment());
     }
 
     public void onEventMainThread(OnCommentDeletedEvent event) {
